@@ -1,4 +1,5 @@
 import EventModel from "@/models/EventModel";
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -44,7 +45,11 @@ export default function EventList() {
   useEffect(() => {
     async function fetchEvents() {
       // const events = await getEvents();
-      setEvents(testEvents);
+      axios.get("/api/event").then((response) => {
+        setEvents(response.data);
+        console.log(response.data);
+      });
+      // setEvents(testEvents);
       setLoading(false);
     }
 

@@ -42,6 +42,10 @@ export default defineConfig({
         target: "https://localhost:7149/",
         secure: false,
       },
+      "^/api/*": {
+        target: "https://localhost:7149/",
+        secure: false,
+      },
     },
     port: 5173,
     open: {
