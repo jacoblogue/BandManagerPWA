@@ -2,10 +2,13 @@ import EventModel from "@/models/EventModel";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Button } from "reactstrap";
+import CreateEventForm from "./CreateEventForm";
 
 export default function EventList() {
   const [events, setEvents] = useState<EventModel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
 
   function generateGuid(): string {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
@@ -18,43 +21,22 @@ export default function EventList() {
     );
   }
 
-  const testEvents: EventModel[] = [
-    {
-      id: generateGuid(),
-      title: "Event 1",
-      description: "Description 1",
-      date: new Date(),
-      location: "Location 1",
-    },
-    {
-      id: generateGuid(),
-      title: "Event 2",
-      description: "Description 2",
-      date: new Date(),
-      location: "Location 2",
-    },
-    {
-      id: generateGuid(),
-      title: "Event 3",
-      description: "Description 3",
-      date: new Date(),
-      location: "Location 3",
-    },
-  ];
-
   useEffect(() => {
     async function fetchEvents() {
       // const events = await getEvents();
       axios.get("/api/event").then((response) => {
         setEvents(response.data);
-        console.log(response.data);
       });
-      // setEvents(testEvents);
       setLoading(false);
     }
 
     fetchEvents();
   }, []);
+
+  const handleButtonClick = () => {
+    // show the form
+    setShowForm(!showForm);
+  };
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -70,6 +52,8 @@ export default function EventList() {
           </li>
         ))}
       </ul>
+      <Button onClick={handleButtonClick}>Add Event</Button>
+      {showForm && <CreateEventForm setEvents={setEvents} events={events} />}
     </div>
   );
 }

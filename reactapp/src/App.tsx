@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/common/Layout";
-import EventList from "./components/eventList/EventList";
+import EventList from "./components/events/EventList";
 import RouteModel from "./models/RouteModel";
-import Home from "./components/home/home";
+import Home from "./components/home/Home";
 
 const routes: RouteModel[] = [
   {

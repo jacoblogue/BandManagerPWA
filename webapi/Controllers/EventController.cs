@@ -22,5 +22,11 @@ namespace webapi.Controllers
 
             return Ok(testEvents);
         }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] EventDTO newEvent)
+        {
+            return Ok(newEvent);
+        }
     }
 }
