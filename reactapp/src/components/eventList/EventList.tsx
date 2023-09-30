@@ -1,4 +1,4 @@
-import EventModel from "@/models/eventModel";
+import EventModel from "@/models/EventModel";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
