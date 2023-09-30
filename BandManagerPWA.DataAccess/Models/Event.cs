@@ -1,6 +1,6 @@
-﻿namespace webapi.Models
+﻿namespace BandManagerPWA.DataAccess.Models
 {
-    public class EventDTO
+    public class Event
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
