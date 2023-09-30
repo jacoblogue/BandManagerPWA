@@ -1,3 +1,4 @@
+import RouteModel from "@/models/RouteModel";
 import React, { ReactNode } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import {
@@ -9,7 +10,11 @@ import {
   NavItem,
 } from "reactstrap";
 
-export default function Layout() {
+interface Props {
+  routes: RouteModel[];
+}
+
+export default function Layout({ routes }: Props) {
   return (
     <div>
       {/* Navbar */}
@@ -18,11 +23,13 @@ export default function Layout() {
         <NavbarToggler />
         <Collapse navbar>
           <Nav className="mr-auto" navbar>
-            <NavItem>
-              <NavLink to={"/"} className={"nav-link"}>
-                Home
-              </NavLink>
-            </NavItem>
+            {routes.map((route) => (
+              <NavItem key={route.path}>
+                <NavLink to={route.path} className={"nav-link"}>
+                  {route.name}
+                </NavLink>
+              </NavItem>
+            ))}
           </Nav>
         </Collapse>
       </Navbar>
