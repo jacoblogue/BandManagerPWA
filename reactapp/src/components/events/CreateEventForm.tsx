@@ -17,8 +17,7 @@ export default function CreateEventForm({ setEvents, events }: Props) {
   });
   const createEvent = (newEvent: EventModel) => {
     axios.post("/api/event", newEvent).then((response) => {
-      setEvents([...events, newEvent]);
-      console.log(response.data);
+      setEvents([...events, response.data]);
     });
   };
   const handleSubmit = (formEvent: React.FormEvent<HTMLFormElement>) => {
@@ -29,10 +28,31 @@ export default function CreateEventForm({ setEvents, events }: Props) {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setNewEvent((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setNewEvent((prevState) => {
+      // Clone the existing state
+      const updatedState: EventModel = { ...prevState };
+
+      if ((name === "date" || name === "time") && prevState.date) {
+        // Clone the existing Date object
+        const date = new Date(prevState.date.getTime());
+
+        if (name === "date") {
+          const [year, month, day] = value.split("-");
+          date.setFullYear(+year, +month - 1, +day);
+        } else if (name === "time") {
+          const [hours, minutes] = value.split(":");
+          date.setHours(+hours, +minutes);
+        }
+
+        // Update the date field in the state
+        updatedState.date = date;
+      } else {
+        // Update other fields in the state
+        (updatedState as any)[name] = value;
+      }
+
+      return updatedState;
+    });
   };
 
   return (
@@ -66,6 +86,16 @@ export default function CreateEventForm({ setEvents, events }: Props) {
           name="date"
           id="date"
           placeholder="Enter the event date"
+          onChange={handleChange}
+        />
+      </FormGroup>
+      <FormGroup>
+        <Label for="time">Time</Label>
+        <Input
+          type="time"
+          name="time"
+          id="time"
+          placeholder="Enter the event time"
           onChange={handleChange}
         />
       </FormGroup>

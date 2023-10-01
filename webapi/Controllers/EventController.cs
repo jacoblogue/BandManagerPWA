@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BandManagerPWA.DataAccess.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using webapi.Models;
 
@@ -8,6 +9,12 @@ namespace webapi.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
+        private ApplicationDbContext _context;
+        public EventController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
         public IActionResult Get()
         {
@@ -20,12 +27,26 @@ namespace webapi.Controllers
                 new EventDTO { Id = Guid.NewGuid(), Title = "My Event 5", Description = "My Description 5", Location = "My Location 5", Date = new System.DateTime(2020, 1, 5) },
             };
 
-            return Ok(testEvents);
+            var events = _context.Events.ToList();
+
+            return Ok(events);
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] EventDTO newEvent)
+        public IActionResult Post([FromBody] EventDTO incomingEvent)
         {
+            var newEvent = new Event
+            {
+                Id = Guid.NewGuid(),
+                Title = incomingEvent.Title,
+                Description = incomingEvent.Description,
+                Location = incomingEvent.Location,
+                Date = incomingEvent.Date
+            };
+
+            _context.Add(newEvent);
+            _context.SaveChanges();
+
             return Ok(newEvent);
         }
     }
