@@ -15,13 +15,16 @@ interface Props {
 }
 
 export default function Layout({ routes }: Props) {
+  const [collapsed, setCollapsed] = React.useState(true);
+
+  const toggleNavbar = () => setCollapsed(!collapsed);
   return (
     <div>
       {/* Navbar */}
       <Navbar color="light" light expand="lg">
         <NavbarBrand href="#">Band Manager</NavbarBrand>
-        <NavbarToggler />
-        <Collapse navbar>
+        <NavbarToggler onClick={toggleNavbar} />
+        <Collapse isOpen={!collapsed} navbar>
           <Nav className="mr-auto" navbar>
             {routes.map((route) => (
               <NavItem key={route.path}>

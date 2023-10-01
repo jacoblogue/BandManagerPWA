@@ -37,6 +37,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: "0.0.0.0", // allows phone to connect
     proxy: {
       "^/weatherforecast": {
         target: "https://localhost:7149/",
