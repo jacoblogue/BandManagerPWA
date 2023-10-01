@@ -1,14 +1,11 @@
-// This is your custom service worker file
-import { precacheAndRoute } from "workbox-precaching";
-import { registerRoute } from "workbox-routing";
-import { CacheFirst, StaleWhileRevalidate } from "workbox-strategies";
-import { ExpirationPlugin } from "workbox-expiration";
-import { clientsClaim, skipWaiting } from "workbox-core";
+importScripts(
+  "https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-sw.js"
+);
 
 precacheAndRoute(self.__WB_MANIFEST);
-
+workbox.preCaching;
 // Cache images
-registerRoute(
+workboxConfig.registerRoute(
   /\/api\/.*$/,
   new CacheFirst({
     cacheName: "api-cache",
