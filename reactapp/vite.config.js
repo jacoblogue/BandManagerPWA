@@ -4,6 +4,7 @@ import { defineConfig } from "vite";
 import plugin from "@vitejs/plugin-react";
 import fs from "fs";
 import path from "path";
+import { VitePWA } from "vite-plugin-pwa";
 
 process.env.BROWSER = "chrome";
 const baseFolder =
@@ -30,7 +31,20 @@ const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [plugin()],
+  plugins: [
+    plugin(),
+    VitePWA({
+      strategies: "injectManifest",
+      injectRegister: "script",
+      srcDir: "src",
+      filename: "sw.ts",
+      registerType: "autoUpdate",
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,png}", "assets/**/*"],
+      },
+      devOptions: { enabled: true },
+    }),
+  ],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

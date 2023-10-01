@@ -1,11 +1,14 @@
-importScripts(
-  "https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-sw.js"
-);
+import { precacheAndRoute } from "workbox-precaching";
+import { registerRoute } from "workbox-routing";
+import { CacheFirst, StaleWhileRevalidate } from "workbox-strategies";
+import { clientsClaim, skipWaiting } from "workbox-core";
+import { ExpirationPlugin } from "workbox-expiration";
+
+declare let self: ServiceWorkerGlobalScope;
 
 precacheAndRoute(self.__WB_MANIFEST);
-workbox.preCaching;
 // Cache images
-workboxConfig.registerRoute(
+registerRoute(
   /\/api\/.*$/,
   new CacheFirst({
     cacheName: "api-cache",
@@ -30,4 +33,4 @@ registerRoute(
 clientsClaim();
 
 // Skip waiting for the service worker to become active
-skipWaiting();
+self.skipWaiting();
