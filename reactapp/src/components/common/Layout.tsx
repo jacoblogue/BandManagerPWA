@@ -22,7 +22,18 @@ export default function Layout({ routes }: Props) {
     <div>
       {/* Navbar */}
       <Navbar color="light" light expand="lg">
-        <NavbarBrand href="#">Band Manager</NavbarBrand>
+        <NavbarBrand href="#">
+          <img
+            src="src\assets\BandManagerLogo.svg"
+            alt="BandManager logo"
+            width={"180"}
+            style={{
+              display: "inline-block",
+              marginRight: "5px",
+              verticalAlign: "middle",
+            }}
+          />
+        </NavbarBrand>
         <NavbarToggler onClick={toggleNavbar} />
         <Collapse isOpen={!collapsed} navbar>
           <Nav className="mr-auto" navbar>
