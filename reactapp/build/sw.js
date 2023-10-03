@@ -1,23 +1,20 @@
 // This is your custom service worker file
 import { precacheAndRoute } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { CacheFirst, StaleWhileRevalidate } from "workbox-strategies";
+import {
+  CacheFirst,
+  StaleWhileRevalidate,
+  NetworkFirst,
+} from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 import { clientsClaim, skipWaiting } from "workbox-core";
 
 precacheAndRoute([]);
 
-// Cache images
 registerRoute(
   /\/api\/.*$/,
-  new CacheFirst({
+  new NetworkFirst({
     cacheName: "api-cache",
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 50,
-        maxAgeSeconds: 60 * 60, // 1 hour
-      }),
-    ],
   })
 );
 

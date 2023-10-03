@@ -29,7 +29,8 @@
   ],
   "start_url": "/",
   "description": "Suite of tools for managing a band",
-  "display": "standalone",
+  "display": "fullscreen",
   "theme_color": "#ffffff",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "scope": "/"
 }
