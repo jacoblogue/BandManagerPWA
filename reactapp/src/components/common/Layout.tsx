@@ -22,11 +22,12 @@ export default function Layout({ routes }: Props) {
     <div>
       {/* Navbar */}
       <Navbar color="light" light expand="lg">
-        <NavbarBrand href="#">
+        <NavbarBrand href="/">
           <img
             src="src\assets\BandManagerLogo.svg"
             alt="BandManager logo"
             width={"180"}
+            height={"40"}
             style={{
               display: "inline-block",
               marginRight: "5px",
