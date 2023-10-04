@@ -1,6 +1,10 @@
 import { precacheAndRoute } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { CacheFirst, StaleWhileRevalidate } from "workbox-strategies";
+import {
+  CacheFirst,
+  StaleWhileRevalidate,
+  NetworkFirst,
+} from "workbox-strategies";
 import { clientsClaim, skipWaiting } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 
@@ -10,14 +14,8 @@ precacheAndRoute(self.__WB_MANIFEST);
 // Cache images
 registerRoute(
   /\/api\/.*$/,
-  new CacheFirst({
+  new NetworkFirst({
     cacheName: "api-cache",
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 50,
-        maxAgeSeconds: 60 * 60, // 1 hour
-      }),
-    ],
   })
 );
 
