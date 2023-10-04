@@ -9,6 +9,7 @@ export default function EventList() {
   const [events, setEvents] = useState<EventModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   function generateGuid(): string {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
@@ -35,7 +36,12 @@ export default function EventList() {
 
   const handleButtonClick = () => {
     // show the form
+    setFormSubmitted(false);
     setShowForm(!showForm);
+  };
+
+  const onFormSubmit = () => {
+    setFormSubmitted(true);
   };
 
   if (loading) {
@@ -53,7 +59,13 @@ export default function EventList() {
         ))}
       </ul>
       <Button onClick={handleButtonClick}>Add Event</Button>
-      {showForm && <CreateEventForm setEvents={setEvents} events={events} />}
+      {showForm && !formSubmitted && (
+        <CreateEventForm
+          setEvents={setEvents}
+          onFormSubmit={onFormSubmit}
+          events={events}
+        />
+      )}
     </div>
   );
 }

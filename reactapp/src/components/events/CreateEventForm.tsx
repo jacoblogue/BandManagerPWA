@@ -6,9 +6,14 @@ import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 interface Props {
   setEvents: React.Dispatch<React.SetStateAction<EventModel[]>>;
   events: EventModel[];
+  onFormSubmit: () => void;
 }
 
-export default function CreateEventForm({ setEvents, events }: Props) {
+export default function CreateEventForm({
+  setEvents,
+  events,
+  onFormSubmit,
+}: Props) {
   const [newEvent, setNewEvent] = React.useState<EventModel>({
     title: "",
     description: "",
@@ -23,7 +28,7 @@ export default function CreateEventForm({ setEvents, events }: Props) {
   const handleSubmit = (formEvent: React.FormEvent<HTMLFormElement>) => {
     formEvent.preventDefault();
     createEvent(newEvent);
-    // TODO: Send the event data to the server
+    onFormSubmit();
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
