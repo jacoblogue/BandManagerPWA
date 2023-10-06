@@ -40,7 +40,11 @@ export default function Layout({ routes }: Props) {
           <Nav className="mr-auto" navbar>
             {routes.map((route) => (
               <NavItem key={route.path}>
-                <NavLink to={route.path} className={"nav-link"}>
+                <NavLink
+                  to={route.path}
+                  onClick={() => setCollapsed(!collapsed)}
+                  className={"nav-link"}
+                >
                   {route.name}
                 </NavLink>
               </NavItem>

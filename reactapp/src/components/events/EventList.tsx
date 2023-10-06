@@ -2,8 +2,18 @@ import EventModel from "@/models/EventModel";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "reactstrap";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Row,
+} from "reactstrap";
 import CreateEventForm from "./CreateEventForm";
+import { BsPlus, BsPlusCircle } from "react-icons/bs";
+import { formatDate, formatTime } from "@/utilities/dateUtils";
 
 export default function EventList() {
   const [events, setEvents] = useState<EventModel[]>([]);
@@ -45,27 +55,68 @@ export default function EventList() {
   };
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <strong>Loading...</strong>;
   }
 
+  const formatDateString = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  };
+
   return (
-    <div>
-      <h1>Events</h1>
-      <ul>
-        {events.map((event) => (
-          <li key={event.id}>
-            <Link to={`/events/${event.id}`}>{event.title}</Link>
-          </li>
-        ))}
-      </ul>
-      <Button onClick={handleButtonClick}>Add Event</Button>
-      {showForm && !formSubmitted && (
-        <CreateEventForm
-          setEvents={setEvents}
-          onFormSubmit={onFormSubmit}
-          events={events}
-        />
-      )}
-    </div>
+    <Container fluid>
+      <Row>
+        <Col xs={3}></Col>
+
+        <Col xs={6}>
+          <h1>Events</h1>
+          {events.map((event) => (
+            <Card key={event.id} className="mb-3">
+              <CardHeader>
+                <h3>{event.title}</h3>
+              </CardHeader>
+              <CardBody>
+                <p>
+                  <strong>Location:</strong> {event.location}
+                </p>
+                <p>
+                  <strong>Date:</strong>
+                  {event.date ? formatDate(event.date) : "No date specified"}
+                </p>
+                <p>
+                  <strong>Description:</strong> {event.description}
+                </p>
+                <p>
+                  <strong>Time:</strong>{" "}
+                  {event.date
+                    ? formatTime(new Date(event.date))
+                    : "No time specified"}
+                </p>
+              </CardBody>
+            </Card>
+          ))}
+          {showForm && !formSubmitted && (
+            <CreateEventForm
+              setEvents={setEvents}
+              onFormSubmit={onFormSubmit}
+              events={events}
+            />
+          )}
+        </Col>
+        <Col xs={3}>
+          <Button
+            style={{ position: "fixed", bottom: "1rem", right: "1rem" }}
+            onClick={handleButtonClick}
+          >
+            Add Event
+          </Button>
+        </Col>
+      </Row>
+    </Container>
   );
 }
