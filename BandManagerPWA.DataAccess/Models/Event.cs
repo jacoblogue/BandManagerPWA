@@ -1,6 +1,6 @@
 ﻿namespace BandManagerPWA.DataAccess.Models
 {
-    public class Event
+    public class Event : BaseEntity
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
