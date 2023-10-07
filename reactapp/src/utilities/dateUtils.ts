@@ -10,6 +10,7 @@ export function formatDate(
   locale: string = "en-US",
   options: Intl.DateTimeFormatOptions = {}
 ): string {
+  console.log("date", date);
   return new Date(date).toLocaleDateString(locale, {
     year: "numeric",
     month: "long",

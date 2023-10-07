@@ -49,5 +49,21 @@ namespace webapi.Controllers
 
             return Ok(newEvent);
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(Guid id)
+        {
+            var eventToDelete = _context.Events.Find(id);
+
+            if (eventToDelete == null)
+            {
+                return NotFound();
+            }
+
+            _context.Remove(eventToDelete);
+            _context.SaveChanges();
+
+            return Ok();
+        }
     }
 }

@@ -1,11 +1,12 @@
-import EventModel from "@/models/EventModel";
+import ExistingEventModel from "@/models/ExistingEventModel";
+import NewEventModel from "@/models/NewEventModel";
 import axios from "axios";
 import React from "react";
 import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 
 interface Props {
-  setEvents: React.Dispatch<React.SetStateAction<EventModel[]>>;
-  events: EventModel[];
+  setEvents: React.Dispatch<React.SetStateAction<ExistingEventModel[]>>;
+  events: ExistingEventModel[];
   onFormSubmit: () => void;
 }
 
@@ -14,17 +15,21 @@ export default function CreateEventForm({
   events,
   onFormSubmit,
 }: Props) {
-  const [newEvent, setNewEvent] = React.useState<EventModel>({
+  const [newEvent, setNewEvent] = React.useState<NewEventModel>({
     title: "",
     description: "",
     date: new Date(),
     location: "",
   });
-  const createEvent = (newEvent: EventModel) => {
+
+  const createEvent = (newEvent: NewEventModel) => {
+    console.log(newEvent);
+
     axios.post("/api/event", newEvent).then((response) => {
       setEvents([...events, response.data]);
     });
   };
+
   const handleSubmit = (formEvent: React.FormEvent<HTMLFormElement>) => {
     formEvent.preventDefault();
     createEvent(newEvent);
@@ -33,9 +38,10 @@ export default function CreateEventForm({
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    console.log(name, value);
     setNewEvent((prevState) => {
       // Clone the existing state
-      const updatedState: EventModel = { ...prevState };
+      const updatedState: NewEventModel = { ...prevState };
 
       if ((name === "date" || name === "time") && prevState.date) {
         // Clone the existing Date object
@@ -48,7 +54,8 @@ export default function CreateEventForm({
           const [hours, minutes] = value.split(":");
           date.setHours(+hours, +minutes);
         }
-
+        console.log(updatedState.date);
+        console.log(date);
         // Update the date field in the state
         updatedState.date = date;
       } else {
