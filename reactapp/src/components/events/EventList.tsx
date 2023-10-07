@@ -13,8 +13,7 @@ export default function EventList() {
 
   useEffect(() => {
     async function fetchEvents() {
-      // const events = await getEvents();
-      axios.get("/api/event").then((response) => {
+      await axios.get("/api/event").then((response) => {
         setEvents(response.data);
       });
       setLoading(false);

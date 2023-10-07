@@ -41,7 +41,7 @@ namespace webapi.Controllers
                 Title = incomingEvent.Title,
                 Description = incomingEvent.Description,
                 Location = incomingEvent.Location,
-                Date = incomingEvent.Date
+                Date = incomingEvent.Date.ToUniversalTime()
             };
 
             _context.Add(newEvent);

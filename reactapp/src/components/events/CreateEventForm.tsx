@@ -25,6 +25,21 @@ export default function CreateEventForm({
   const createEvent = (newEvent: NewEventModel) => {
     console.log(newEvent);
 
+    const utcDate = new Date(
+      Date.UTC(
+        newEvent.date.getFullYear(),
+        newEvent.date.getMonth(),
+        newEvent.date.getDate(),
+        newEvent.date.getHours(),
+        newEvent.date.getMinutes()
+      )
+    );
+
+    const preparedEvent = {
+      ...newEvent,
+      date: utcDate,
+    };
+
     axios.post("/api/event", newEvent).then((response) => {
       setEvents([...events, response.data]);
     });
@@ -48,14 +63,14 @@ export default function CreateEventForm({
         const date = new Date(prevState.date.getTime());
 
         if (name === "date") {
+          console.log("date", value);
           const [year, month, day] = value.split("-");
           date.setFullYear(+year, +month - 1, +day);
         } else if (name === "time") {
+          console.log("time", value);
           const [hours, minutes] = value.split(":");
           date.setHours(+hours, +minutes);
         }
-        console.log(updatedState.date);
-        console.log(date);
         // Update the date field in the state
         updatedState.date = date;
       } else {
