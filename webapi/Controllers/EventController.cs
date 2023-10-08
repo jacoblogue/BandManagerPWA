@@ -1,6 +1,6 @@
 ﻿using BandManagerPWA.DataAccess.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using webapi.Models;
 
 namespace webapi.Controllers
@@ -16,24 +16,15 @@ namespace webapi.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetEvents()
         {
-            var testEvents = new EventDTO[]
-            {
-                new EventDTO { Id = Guid.NewGuid(), Title = "My Event", Description = "My Description", Location = "My Location", Date = new DateTime(2020, 1, 1) },
-                new EventDTO { Id = Guid.NewGuid(), Title = "My Event 2", Description = "My Description 2", Location = "My Location 2", Date = new DateTime(2020, 1, 2) },
-                new EventDTO { Id = Guid.NewGuid(), Title = "My Event 3", Description = "My Description 3", Location = "My Location 3", Date = new DateTime(2020, 1, 3) },
-                new EventDTO { Id = Guid.NewGuid(), Title = "My Event 4", Description = "My Description 4", Location = "My Location 4", Date = new DateTime(2020, 1, 4) },
-                new EventDTO { Id = Guid.NewGuid(), Title = "My Event 5", Description = "My Description 5", Location = "My Location 5", Date = new DateTime(2020, 1, 5) },
-            };
-
-            var events = _context.Events.ToList();
+            var events = await _context.Events.ToListAsync();
 
             return Ok(events);
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] EventDTO incomingEvent)
+        public async Task<IActionResult> CreateEvent([FromBody] EventDTO incomingEvent)
         {
             var newEvent = new Event
             {
@@ -44,16 +35,16 @@ namespace webapi.Controllers
                 Date = incomingEvent.Date.ToUniversalTime()
             };
 
-            _context.Add(newEvent);
-            _context.SaveChanges();
+            await _context.AddAsync(newEvent);
+            await _context.SaveChangesAsync();
 
             return Ok(newEvent);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var eventToDelete = _context.Events.Find(id);
+            var eventToDelete = await _context.Events.FindAsync(id);
 
             if (eventToDelete == null)
             {
@@ -61,7 +52,7 @@ namespace webapi.Controllers
             }
 
             _context.Remove(eventToDelete);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok();
         }
