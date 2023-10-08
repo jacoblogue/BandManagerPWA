@@ -1,6 +1,7 @@
 import ExistingEventModel from "@/models/ExistingEventModel";
 import NewEventModel from "@/models/NewEventModel";
 import axios from "axios";
+import { setYear, setMonth, setDate, setHours, setMinutes } from "date-fns";
 import { Field, Formik, useFormik } from "formik";
 import React from "react";
 import {
@@ -56,34 +57,38 @@ export default function CreateEventForm({
     });
   };
 
-  const customHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const customHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    formValues: any,
+    setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void
+  ) => {
     const { name, value } = event.target;
-    setNewEvent((prevState) => {
-      // Clone the existing state
-      const updatedState: NewEventModel = { ...prevState };
 
-      if ((name === "date" || name === "time") && prevState.date) {
-        // Clone the existing Date object
-        const date = new Date(prevState.date.getTime());
+    if ((name === "date" || name === "time") && formValues.date) {
+      let date = new Date(formValues.date);
 
-        if (name === "date") {
-          console.log("date", value);
-          const [year, month, day] = value.split("-");
-          date.setFullYear(+year, +month - 1, +day);
-        } else if (name === "time") {
-          console.log("time", value);
-          const [hours, minutes] = value.split(":");
-          date.setHours(+hours, +minutes);
-        }
-        // Update the date field in the state
-        updatedState.date = date;
-      } else {
-        // Update other fields in the state
-        (updatedState as any)[name] = value;
+      if (name === "date") {
+        const [year, month, day] = value.split("-").map(Number);
+        date = setYear(date, year);
+        date = setMonth(date, month - 1);
+        date = setDate(date, day);
+        setFieldValue("date", date);
+      } else if (name === "time") {
+        const [hours, minutes] = value.split(":").map(Number);
+        date = setHours(date, hours);
+        date = setMinutes(date, minutes);
+
+        setFieldValue(
+          "time",
+          `${String(date.getHours()).padStart(2, "0")}:${String(
+            date.getMinutes()
+          ).padStart(2, "0")}`
+        );
       }
-
-      return updatedState;
-    });
+    } else {
+      // Update other fields in the form
+      setFieldValue(name, value);
+    }
   };
 
   return (
@@ -102,16 +107,23 @@ export default function CreateEventForm({
       validationSchema={validationSchema}
       validateOnBlur={true}
       onSubmit={(values: NewEventModel) => {
+        console.log("values", values);
+
         createEvent(values);
         onFormSubmit();
       }}
     >
       {(formik) => (
-        <Form>
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault();
+            formik.handleSubmit(e);
+          }}
+        >
           <FormGroup>
             <Label for="title">Title</Label>
             <Field name="title">
-              {({ field, meta }) => {
+              {({ field, form, meta }) => {
                 return (
                   <div>
                     <Input
@@ -120,8 +132,15 @@ export default function CreateEventForm({
                       name="title"
                       id="title"
                       placeholder="Enter the event title"
-                      invalid={meta.touched && meta.error}
-                      valid={meta.touched && !meta.error}
+                      invalid={meta.touched && meta.error ? true : false}
+                      valid={meta.touched && !meta.error ? true : false}
+                      onChange={(event) => {
+                        customHandleChange(
+                          event,
+                          form.values,
+                          formik.setFieldValue
+                        );
+                      }}
                     />
                     <FormFeedback>{meta.error}</FormFeedback>
                   </div>
@@ -132,7 +151,7 @@ export default function CreateEventForm({
           <FormGroup>
             <Label for="description">Description</Label>
             <Field name="description">
-              {({ field, meta }) => {
+              {({ field, form, meta }) => {
                 return (
                   <div>
                     <Input
@@ -141,8 +160,15 @@ export default function CreateEventForm({
                       name="description"
                       id="description"
                       placeholder="Enter the event description"
-                      invalid={meta.touched && meta.error}
-                      valid={meta.touched && !meta.error}
+                      invalid={meta.touched && meta.error ? true : false}
+                      valid={meta.touched && !meta.error ? true : false}
+                      onChange={(event) => {
+                        customHandleChange(
+                          event,
+                          form.values,
+                          formik.setFieldValue
+                        );
+                      }}
                     />
                     <FormFeedback>{meta.error}</FormFeedback>
                   </div>
@@ -156,7 +182,7 @@ export default function CreateEventForm({
           <FormGroup>
             <Label for="date">Date</Label>
             <Field name="date">
-              {({ field, meta }) => {
+              {({ field, form, meta }) => {
                 const dateValue =
                   field.value instanceof Date
                     ? field.value.toISOString().substring(0, 10)
@@ -168,10 +194,17 @@ export default function CreateEventForm({
                       type="date"
                       name="date"
                       id="date"
-                      invalid={meta.touched && meta.error}
                       placeholder="Enter the event date"
                       value={dateValue}
-                      valid={meta.touched && !meta.error}
+                      invalid={meta.touched && meta.error ? true : false}
+                      valid={meta.touched && !meta.error ? true : false}
+                      onChange={(event) => {
+                        customHandleChange(
+                          event,
+                          form.values,
+                          formik.setFieldValue
+                        );
+                      }}
                     />
                     <FormFeedback>{meta.error}</FormFeedback>
                   </div>
@@ -182,7 +215,7 @@ export default function CreateEventForm({
           <FormGroup>
             <Label for="time">Time</Label>
             <Field name="time">
-              {({ field, meta }) => {
+              {({ field, form, meta }) => {
                 return (
                   <div>
                     <Input
@@ -190,9 +223,17 @@ export default function CreateEventForm({
                       type="time"
                       name="time"
                       id="time"
-                      invalid={meta.touched && meta.error}
+                      invalid={meta.touched && meta.error ? true : false}
+                      value={formik.values.time}
                       placeholder="Enter the event time"
-                      valid={meta.touched && !meta.error}
+                      valid={meta.touched && !meta.error ? true : false}
+                      onChange={(event) => {
+                        customHandleChange(
+                          event,
+                          form.values,
+                          formik.setFieldValue
+                        );
+                      }}
                     />
                     <FormFeedback>{meta.error}</FormFeedback>
                   </div>
@@ -203,7 +244,7 @@ export default function CreateEventForm({
           <FormGroup>
             <Label for="location">Location</Label>
             <Field name="location">
-              {({ field, meta }) => {
+              {({ field, form, meta }) => {
                 return (
                   <div>
                     <Input
@@ -212,8 +253,15 @@ export default function CreateEventForm({
                       name="location"
                       id="location"
                       placeholder="Enter the event location"
-                      invalid={meta.touched && meta.error}
-                      valid={meta.touched && !meta.error}
+                      invalid={meta.touched && meta.error ? true : false}
+                      valid={meta.touched && !meta.error ? true : false}
+                      onChange={(event) => {
+                        customHandleChange(
+                          event,
+                          form.values,
+                          formik.setFieldValue
+                        );
+                      }}
                     />
                     <FormFeedback>{meta.error}</FormFeedback>
                   </div>
