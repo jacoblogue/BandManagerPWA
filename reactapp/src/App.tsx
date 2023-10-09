@@ -4,6 +4,7 @@ import Layout from "./components/common/Layout";
 import EventList from "./components/events/EventList";
 import RouteModel from "./models/RouteModel";
 import Home from "./components/home/Home";
+import EventPage from "./components/events/EventPage";
 
 const routes: RouteModel[] = [
   {
@@ -14,7 +15,7 @@ const routes: RouteModel[] = [
   },
   {
     path: "/events",
-    element: <EventList />,
+    element: <EventPage />,
     name: "Events",
   },
 ];

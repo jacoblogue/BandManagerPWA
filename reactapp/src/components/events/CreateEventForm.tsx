@@ -72,7 +72,6 @@ export default function CreateEventForm({
   ) => {
     const { name, value } = event.target;
 
-    console.log("triggered");
     if ((name === "date" || name === "time") && formValues.date) {
       let date = new Date(formValues.date);
 
@@ -116,8 +115,6 @@ export default function CreateEventForm({
       validationSchema={validationSchema}
       validateOnBlur={true}
       onSubmit={(values: NewEventModel) => {
-        console.log("values", values);
-
         createEvent(values);
         onFormSubmit();
       }}
@@ -219,7 +216,6 @@ export default function CreateEventForm({
                 const timeZone = "America/New_York"; // Replace with the time zone you want to use
                 const zonedDate = utcToZonedTime(field.value, timeZone);
                 const dateValue = format(zonedDate, "yyyy-MM-dd");
-                console.log("date value", dateValue);
                 return (
                   <div>
                     <Input
@@ -257,7 +253,6 @@ export default function CreateEventForm({
                 form: FormikProps<NewEventModel>;
                 meta: FieldMetaProps<string>;
               }) => {
-                console.log("time value", field.value);
                 return (
                   <div>
                     <Input
