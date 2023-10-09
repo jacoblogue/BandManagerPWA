@@ -1,8 +1,23 @@
 import ExistingEventModel from "@/models/ExistingEventModel";
 import NewEventModel from "@/models/NewEventModel";
 import axios from "axios";
-import { setYear, setMonth, setDate, setHours, setMinutes } from "date-fns";
-import { Field, Formik, useFormik } from "formik";
+import {
+  setYear,
+  setMonth,
+  setDate,
+  setHours,
+  setMinutes,
+  format,
+} from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
+import {
+  Field,
+  FieldInputProps,
+  FieldMetaProps,
+  Formik,
+  FormikProps,
+  useFormik,
+} from "formik";
 import React from "react";
 import {
   Button,
@@ -44,13 +59,6 @@ export default function CreateEventForm({
   events,
   onFormSubmit,
 }: Props) {
-  const [newEvent, setNewEvent] = React.useState<NewEventModel>({
-    title: "",
-    description: "",
-    date: new Date(),
-    location: "",
-  });
-
   const createEvent = (newEvent: NewEventModel) => {
     axios.post("/api/event", newEvent).then((response) => {
       setEvents([...events, response.data]);
@@ -64,6 +72,7 @@ export default function CreateEventForm({
   ) => {
     const { name, value } = event.target;
 
+    console.log("triggered");
     if ((name === "date" || name === "time") && formValues.date) {
       let date = new Date(formValues.date);
 
@@ -123,7 +132,15 @@ export default function CreateEventForm({
           <FormGroup>
             <Label for="title">Title</Label>
             <Field name="title">
-              {({ field, form, meta }) => {
+              {({
+                field,
+                form,
+                meta,
+              }: {
+                field: FieldInputProps<string>;
+                form: FormikProps<NewEventModel>;
+                meta: FieldMetaProps<string>;
+              }) => {
                 return (
                   <div>
                     <Input
@@ -151,7 +168,15 @@ export default function CreateEventForm({
           <FormGroup>
             <Label for="description">Description</Label>
             <Field name="description">
-              {({ field, form, meta }) => {
+              {({
+                field,
+                form,
+                meta,
+              }: {
+                field: FieldInputProps<string>;
+                form: FormikProps<NewEventModel>;
+                meta: FieldMetaProps<string>;
+              }) => {
                 return (
                   <div>
                     <Input
@@ -182,11 +207,19 @@ export default function CreateEventForm({
           <FormGroup>
             <Label for="date">Date</Label>
             <Field name="date">
-              {({ field, form, meta }) => {
-                const dateValue =
-                  field.value instanceof Date
-                    ? field.value.toISOString().substring(0, 10)
-                    : field.value;
+              {({
+                field,
+                form,
+                meta,
+              }: {
+                field: FieldInputProps<Date>;
+                form: FormikProps<NewEventModel>;
+                meta: FieldMetaProps<Date>;
+              }) => {
+                const timeZone = "America/New_York"; // Replace with the time zone you want to use
+                const zonedDate = utcToZonedTime(field.value, timeZone);
+                const dateValue = format(zonedDate, "yyyy-MM-dd");
+                console.log("date value", dateValue);
                 return (
                   <div>
                     <Input
@@ -215,7 +248,16 @@ export default function CreateEventForm({
           <FormGroup>
             <Label for="time">Time</Label>
             <Field name="time">
-              {({ field, form, meta }) => {
+              {({
+                field,
+                form,
+                meta,
+              }: {
+                field: FieldInputProps<string>;
+                form: FormikProps<NewEventModel>;
+                meta: FieldMetaProps<string>;
+              }) => {
+                console.log("time value", field.value);
                 return (
                   <div>
                     <Input
@@ -244,7 +286,15 @@ export default function CreateEventForm({
           <FormGroup>
             <Label for="location">Location</Label>
             <Field name="location">
-              {({ field, form, meta }) => {
+              {({
+                field,
+                form,
+                meta,
+              }: {
+                field: FieldInputProps<string>;
+                form: FormikProps<NewEventModel>;
+                meta: FieldMetaProps<string>;
+              }) => {
                 return (
                   <div>
                     <Input
