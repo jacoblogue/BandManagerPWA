@@ -1,6 +1,6 @@
-import ExistingEventModel from "@/models/ExistingEventModel";
 import NewEventModel from "@/models/NewEventModel";
-import axios from "axios";
+import { useEventStore } from "@/state/eventStore";
+import axios, { AxiosError } from "axios";
 import {
   setYear,
   setMonth,
@@ -16,7 +16,6 @@ import {
   FieldMetaProps,
   Formik,
   FormikProps,
-  useFormik,
 } from "formik";
 import React from "react";
 import {
@@ -30,8 +29,6 @@ import {
 import * as Yup from "yup";
 
 interface Props {
-  setEvents: React.Dispatch<React.SetStateAction<ExistingEventModel[]>>;
-  events: ExistingEventModel[];
   onFormSubmit: () => void;
 }
 const todayAtMidnight = new Date();
@@ -54,15 +51,16 @@ const validationSchema = Yup.object({
     .max(100, "Location should not exceed 100 characters"),
 });
 
-export default function CreateEventForm({
-  setEvents,
-  events,
-  onFormSubmit,
-}: Props) {
+export default function CreateEventForm({ onFormSubmit }: Props) {
+  const { addEvent } = useEventStore();
+
   const createEvent = (newEvent: NewEventModel) => {
-    axios.post("/api/event", newEvent).then((response) => {
-      setEvents([...events, response.data]);
-    });
+    axios
+      .post("/api/event", newEvent)
+      .then((response) => {})
+      .catch((error: AxiosError) => {
+        console.log(error);
+      });
   };
 
   const customHandleChange = (

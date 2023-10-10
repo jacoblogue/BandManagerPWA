@@ -1,7 +1,9 @@
 ﻿using BandManagerPWA.DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using webapi.Models;
+using webapi.utilities;
 
 namespace webapi.Controllers
 {
@@ -10,9 +12,11 @@ namespace webapi.Controllers
     public class EventController : ControllerBase
     {
         private ApplicationDbContext _context;
-        public EventController(ApplicationDbContext context)
+        private readonly IHubContext<EventHub> _hubContext;
+        public EventController(ApplicationDbContext context, IHubContext<EventHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -38,7 +42,14 @@ namespace webapi.Controllers
             await _context.AddAsync(newEvent);
             await _context.SaveChangesAsync();
 
-            return Ok(newEvent);
+            var message = new
+            {
+                type = "eventAdded",
+                eventId = newEvent.Id
+            };
+
+            await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
@@ -54,6 +65,12 @@ namespace webapi.Controllers
             _context.Remove(eventToDelete);
             await _context.SaveChangesAsync();
 
+            var message = new
+            {
+                type = "eventDeleted",
+                eventId = id
+            };
+            await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
             return Ok();
         }
     }

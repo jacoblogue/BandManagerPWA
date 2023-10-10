@@ -4,16 +4,19 @@ import EventList from "./EventList";
 import CreateEventForm from "./CreateEventForm";
 import axios from "axios";
 import ExistingEventModel from "@/models/ExistingEventModel";
+import { useEventStore } from "@/state/eventStore";
 
 export default function EventPage() {
-  const [events, setEvents] = useState<ExistingEventModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = React.useState(false);
+  const { addEvent } = useEventStore();
 
   useEffect(() => {
     async function fetchEvents() {
       await axios.get("/api/event").then((response) => {
-        setEvents(response.data);
+        response.data.forEach((event: ExistingEventModel) => {
+          addEvent(event);
+        });
       });
       setLoading(false);
     }
@@ -32,25 +35,21 @@ export default function EventPage() {
   return (
     <Container fluid>
       <Row>
-        <Col xs={3}></Col>
-        <Col xs={6}>
+        <Col xs={1}></Col>
+        <Col xs={10}>
           <h1 className="text-center">Events</h1>
           {!showForm ? (
-            <EventList events={events} setEvents={setEvents} />
+            <EventList />
           ) : (
-            <CreateEventForm
-              events={events}
-              setEvents={setEvents}
-              onFormSubmit={onFormSubmit}
-            />
+            <CreateEventForm onFormSubmit={onFormSubmit} />
           )}
         </Col>
-        <Col xs={3}>
+        <Col xs={1}>
           <Button
             style={{ position: "fixed", bottom: "1rem", right: "1rem" }}
             onClick={handleButtonClick}
           >
-            Add Event
+            {!showForm ? "Add Event" : "Cancel"}
           </Button>
         </Col>
       </Row>

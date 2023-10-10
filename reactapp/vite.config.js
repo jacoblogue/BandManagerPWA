@@ -57,9 +57,10 @@ export default defineConfig({
   server: {
     host: "0.0.0.0", // allows phone to connect
     proxy: {
-      "^/weatherforecast": {
+      "^/eventHub": {
         target: "https://localhost:7149/",
         secure: false,
+        ws: true,
       },
       "^/api/*": {
         target: "https://localhost:7149/",

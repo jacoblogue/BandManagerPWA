@@ -1,18 +1,25 @@
-import EventModel from "@/models/ExistingEventModel";
+import ExistingEventModel from "@/models/ExistingEventModel";
+import { useEventStore } from "@/state/eventStore";
 import { formatDate, formatTime } from "@/utilities/dateUtils";
+import axios from "axios";
 import React, { useState } from "react";
 import { Card, CardHeader, CardBody, Button } from "reactstrap";
 
 interface Props {
-  event: EventModel;
-  deleteEvent: (id: string) => void;
+  event: ExistingEventModel;
 }
 
-export default function EventCard({ event, deleteEvent }: Props) {
+export default function EventCard({ event }: Props) {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const { deleteEvent } = useEventStore();
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const handleDelete = async () => {
+    await axios.delete(`/api/event/${event.id}`);
+    deleteEvent(event);
   };
 
   return (
@@ -21,7 +28,7 @@ export default function EventCard({ event, deleteEvent }: Props) {
         <strong>{formatDate(event.date)}</strong>
         <strong>{formatTime(event.date)}</strong>
         <h3>{event.title}</h3>
-        <Button onClick={() => deleteEvent(event.id)}>Delete</Button>
+        <Button onClick={handleDelete}>Delete</Button>
       </CardHeader>
       {!isCollapsed && (
         <CardBody>

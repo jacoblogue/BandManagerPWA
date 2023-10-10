@@ -1,30 +1,15 @@
-import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Container, Row } from "reactstrap";
 import EventCard from "./EventCard";
-import ExistingEventModel from "@/models/ExistingEventModel";
+import { useEventStore } from "@/state/eventStore";
 
-interface Props {
-  events: ExistingEventModel[];
-  setEvents: React.Dispatch<React.SetStateAction<ExistingEventModel[]>>;
-}
-
-export default function EventList({ events, setEvents }: Props) {
-  const deleteEvent = (id: string) => {
-    axios.delete(`/api/event/${id}`).then((response) => {
-      setEvents(events.filter((event) => event.id !== id));
-    });
-  };
-
-  // if (loading) {
-  //   return <strong>Loading...</strong>;
-  // }
-
+export default function EventList() {
+  const { events } = useEventStore();
   return (
     <Container fluid>
       <Row>
         {events.map((event) => (
-          <EventCard event={event} deleteEvent={deleteEvent} key={event.id} />
+          <EventCard event={event} key={event.id} />
         ))}
       </Row>
     </Container>
