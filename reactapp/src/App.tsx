@@ -26,23 +26,41 @@ const routes: RouteModel[] = [
 
 export default function App() {
   const { replaceEvents } = useEventStore();
+
   useEffect(() => {
-    const connection = new signalR.HubConnectionBuilder()
-      .withUrl("/eventHub")
-      .withAutomaticReconnect()
-      .build();
+    let connection: signalR.HubConnection;
 
-    connection.on("ReceiveEventUpdate", (message) => {
-      console.log("Received a SignalR message: ", message);
-      axios.get<ExistingEventModel[]>(`/api/event`).then((response) => {
-        replaceEvents(response.data);
-      });
-    });
+    const startConnection = async () => {
+      try {
+        connection = new signalR.HubConnectionBuilder()
+          .withUrl("/eventHub", {
+            skipNegotiation: true,
+            transport: signalR.HttpTransportType.WebSockets,
+          })
+          .withAutomaticReconnect()
+          .build();
 
-    connection.start().catch((err) => console.log(err));
+        connection.on("ReceiveEventUpdate", (message) => {
+          console.log("Received a SignalR message: ", message);
+          axios.get<ExistingEventModel[]>(`/api/event`).then((response) => {
+            replaceEvents(response.data);
+          });
+        });
+
+        await connection.start();
+        console.log("SignalR Connected.");
+      } catch (err) {
+        console.log("Error while establishing connection:", err);
+        setTimeout(() => startConnection(), 5000);
+      }
+    };
+
+    startConnection();
 
     return () => {
-      connection.stop();
+      if (connection) {
+        connection.stop();
+      }
     };
   }, []);
 
