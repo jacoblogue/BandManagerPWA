@@ -17,7 +17,9 @@ export default function EventCard({ event }: Props) {
     setIsCollapsed(!isCollapsed);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     await axios.delete(`/api/event/${event.id}`);
     deleteEvent(event);
   };
@@ -28,7 +30,7 @@ export default function EventCard({ event }: Props) {
         <strong>{formatDate(event.date)}</strong>
         <strong>{formatTime(event.date)}</strong>
         <h3>{event.title}</h3>
-        <Button onClick={handleDelete}>Delete</Button>
+        <Button onClick={(e) => handleDelete(e)}>Delete</Button>
       </CardHeader>
       {!isCollapsed && (
         <CardBody>
