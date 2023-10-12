@@ -2,23 +2,21 @@ import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/common/Layout";
 import RouteModel from "./models/RouteModel";
-import Home from "./components/home/Home";
 import EventPage from "./components/events/EventPage";
 import * as signalR from "@microsoft/signalr";
 import { useEventStore } from "./state/eventStore";
 import axios from "axios";
-import { replace } from "formik";
 import ExistingEventModel from "./models/ExistingEventModel";
 
 const routes: RouteModel[] = [
+  // {
+  //   path: "/",
+  //   element: <Home />,
+  //   exact: true,
+  //   name: "Home",
+  // },
   {
     path: "/",
-    element: <Home />,
-    exact: true,
-    name: "Home",
-  },
-  {
-    path: "/events",
     element: <EventPage />,
     name: "Events",
   },
