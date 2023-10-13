@@ -30,7 +30,9 @@ export default function EventCard({ event }: Props) {
         <strong>{formatDate(event.date)}</strong>
         <strong>{formatTime(event.date)}</strong>
         <h3>{event.title}</h3>
-        <Button onClick={(e) => handleDelete(e)}>Delete</Button>
+        <Button color="primary" onClick={(e) => handleDelete(e)}>
+          Delete
+        </Button>
       </CardHeader>
       {!isCollapsed && (
         <CardBody>

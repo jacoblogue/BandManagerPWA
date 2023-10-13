@@ -7,11 +7,9 @@ export default function EventList() {
   const { events } = useEventStore();
   return (
     <Container fluid>
-      <Row>
-        {events.map((event) => (
-          <EventCard event={event} key={event.id} />
-        ))}
-      </Row>
+      {events.map((event) => (
+        <EventCard event={event} key={event.id} />
+      ))}
     </Container>
   );
 }
