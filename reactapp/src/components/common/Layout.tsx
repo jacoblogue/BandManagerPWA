@@ -1,5 +1,5 @@
 import RouteModel from "@/models/RouteModel";
-import React, { ReactNode } from "react";
+import React, { useEffect } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import {
   Navbar,
@@ -8,6 +8,7 @@ import {
   Collapse,
   Nav,
   NavItem,
+  Button,
 } from "reactstrap";
 
 interface Props {
@@ -16,12 +17,21 @@ interface Props {
 
 export default function Layout({ routes }: Props) {
   const [collapsed, setCollapsed] = React.useState(true);
+  const [darkMode, setDarkMode] = React.useState(false);
+
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-bs-theme",
+      darkMode ? "dark" : "light"
+    );
+  }, [darkMode]);
 
   const toggleNavbar = () => setCollapsed(!collapsed);
+  const toggleDarkMode = () => setDarkMode(!darkMode);
   return (
     <div>
       {/* Navbar */}
-      <Navbar color="light" light expand="lg">
+      <Navbar expand="lg">
         <NavbarBrand href="/">
           <img
             src="src\assets\BandManagerLogo.svg"
@@ -49,6 +59,11 @@ export default function Layout({ routes }: Props) {
                 </NavLink>
               </NavItem>
             ))}
+            <NavItem className="ml-auto">
+              <Button color="primary" onClick={toggleDarkMode}>
+                {darkMode ? "Light Mode" : "Dark Mode"}
+              </Button>
+            </NavItem>
           </Nav>
         </Collapse>
       </Navbar>
