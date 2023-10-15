@@ -5,6 +5,7 @@ import RouteModel from "./models/RouteModel";
 import EventPage from "./components/events/EventPage";
 import * as signalR from "@microsoft/signalr";
 import { useEventStore } from "./state/eventStore";
+import { useThemeStore } from "./state/themeStore";
 import axios from "axios";
 import ExistingEventModel from "./models/ExistingEventModel";
 
@@ -24,7 +25,14 @@ const routes: RouteModel[] = [
 
 export default function App() {
   const { replaceEvents } = useEventStore();
+  const { setPreferredColorScheme, preferredColorScheme } = useThemeStore();
 
+  /**
+   * This `useEffect` hook establishes a SignalR connection to the server and listens for updates to events.
+   * When an update is received, it sends a GET request to the server to retrieve the updated list of events
+   * and replaces the existing list in the event store with the new list.
+   * The connection is automatically re-established if it is lost.
+   */
   useEffect(() => {
     let connection: signalR.HubConnection;
 
@@ -61,6 +69,25 @@ export default function App() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    console.log(preferredColorScheme);
+    // Initialize and update Zustand store based on media query
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const updateColorScheme = () => {
+      setPreferredColorScheme(mediaQuery.matches ? "dark" : "light");
+    };
+
+    // Initial setting
+    updateColorScheme();
+
+    // Listen for changes
+    mediaQuery.addEventListener("change", (e) => updateColorScheme());
+
+    return () => {
+      mediaQuery.removeEventListener("change", (e) => updateColorScheme());
+    };
+  }, [setPreferredColorScheme]);
 
   return (
     <BrowserRouter>

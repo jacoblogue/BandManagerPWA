@@ -8,8 +8,8 @@ import {
   Collapse,
   Nav,
   NavItem,
-  Button,
 } from "reactstrap";
+import ThemeToggler from "./ThemeToggler";
 
 interface Props {
   routes: RouteModel[];
@@ -18,6 +18,8 @@ interface Props {
 export default function Layout({ routes }: Props) {
   const [collapsed, setCollapsed] = React.useState(true);
   const [darkMode, setDarkMode] = React.useState(false);
+
+  // get preferred theme from browser
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -31,7 +33,7 @@ export default function Layout({ routes }: Props) {
   return (
     <div>
       {/* Navbar */}
-      <Navbar expand="lg">
+      <Navbar expand="lg" className="d-flex justify-content-between">
         <NavbarBrand href="/">
           <img
             src="src\assets\BandManagerLogo.svg"
@@ -59,10 +61,8 @@ export default function Layout({ routes }: Props) {
                 </NavLink>
               </NavItem>
             ))}
-            <NavItem className="ml-auto">
-              <Button color="primary" onClick={toggleDarkMode}>
-                {darkMode ? "Light Mode" : "Dark Mode"}
-              </Button>
+            <NavItem>
+              <ThemeToggler />
             </NavItem>
           </Nav>
         </Collapse>
