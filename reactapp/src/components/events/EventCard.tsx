@@ -21,7 +21,6 @@ export default function EventCard({ event }: Props) {
     e.preventDefault();
     e.stopPropagation();
     await axios.delete(`/api/event/${event.id}`);
-    // deleteEvent(event.id);
   };
 
   return (
