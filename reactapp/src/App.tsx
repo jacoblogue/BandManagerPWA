@@ -8,6 +8,7 @@ import { useEventStore } from "./state/eventStore";
 import { useThemeStore } from "./state/themeStore";
 import axios from "axios";
 import ExistingEventModel from "./models/ExistingEventModel";
+import SignalRMessage from "./models/SignalRMessage";
 
 const routes: RouteModel[] = [
   // {
@@ -24,8 +25,10 @@ const routes: RouteModel[] = [
 ];
 
 export default function App() {
-  const { replaceEvents } = useEventStore();
+  const { replaceEvents, deleteEvent } = useEventStore();
   const { setPreferredColorScheme, preferredColorScheme } = useThemeStore();
+
+  console.log("App rendered.");
 
   /**
    * This `useEffect` hook establishes a SignalR connection to the server and listens for updates to events.
@@ -43,14 +46,18 @@ export default function App() {
             skipNegotiation: true,
             transport: signalR.HttpTransportType.WebSockets,
           })
-          .withAutomaticReconnect()
+          .withAutomaticReconnect([0, 1000, 5000, 10000, 30000])
           .build();
 
-        connection.on("ReceiveEventUpdate", (message) => {
+        connection.on("ReceiveEventUpdate", (message: SignalRMessage) => {
           console.log("Received a SignalR message: ", message);
-          axios.get<ExistingEventModel[]>(`/api/event`).then((response) => {
-            replaceEvents(response.data);
-          });
+          if (message && message.type === "eventDeleted" && message.eventId) {
+            deleteEvent(message.eventId);
+          } else {
+            axios.get<ExistingEventModel[]>(`/api/event`).then((response) => {
+              replaceEvents(response.data);
+            });
+          }
         });
 
         await connection.start();

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Button, Spinner } from "reactstrap"; // import Spinner
+import { Container, Row, Col, Button, Spinner } from "reactstrap";
 import EventList from "./EventList";
 import CreateEventForm from "./CreateEventForm";
 import axios from "axios";

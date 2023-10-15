@@ -39,12 +39,13 @@ namespace webapi.Controllers
                 Date = incomingEvent.Date.ToUniversalTime()
             };
 
+
             await _context.AddAsync(newEvent);
             await _context.SaveChangesAsync();
 
             var message = new
             {
-                type = "eventAdded",
+                type = MessageType.EventAdded,
                 eventId = newEvent.Id
             };
 
@@ -67,7 +68,7 @@ namespace webapi.Controllers
 
             var message = new
             {
-                type = "eventDeleted",
+                type = MessageType.EventDeleted,
                 eventId = id
             };
             await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);

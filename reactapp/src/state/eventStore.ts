@@ -4,15 +4,13 @@ import { create } from "zustand";
 type EventStore = {
   events: ExistingEventModel[];
   addEvent: (event: ExistingEventModel) => void;
-  deleteEvent: (event: ExistingEventModel) => void;
+  deleteEvent: (eventId: string) => void;
   replaceEvents: (newEvents: ExistingEventModel[]) => void;
 };
 
 export const useEventStore = create<EventStore>()((set) => ({
   events: [],
   addEvent: (newEvent) => {
-    // console log where this is called from
-    console.log("addEventCalled");
     set((state) => {
       // Check for duplicate
       if (state.events.some((event) => event.id === newEvent.id)) {
@@ -26,9 +24,9 @@ export const useEventStore = create<EventStore>()((set) => ({
       };
     });
   },
-  deleteEvent: (event) =>
+  deleteEvent: (eventId: string) =>
     set((state) => ({
-      events: state.events.filter((e) => e.id !== event.id),
+      events: state.events.filter((e) => e.id !== eventId),
     })),
   replaceEvents: (newEvents: ExistingEventModel[]) => {
     set({ events: newEvents });
