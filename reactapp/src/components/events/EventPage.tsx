@@ -62,7 +62,7 @@ export default function EventPage() {
             style={{ position: "fixed", bottom: "1rem", right: "1rem" }}
             onClick={handleButtonClick}
           >
-            {!showForm ? "Add Event" : "Cancel"}
+            {!showForm ? "New Event" : "Cancel"}
           </Button>
         </Col>
       </Row>

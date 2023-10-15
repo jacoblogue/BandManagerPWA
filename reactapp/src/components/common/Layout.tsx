@@ -17,19 +17,8 @@ interface Props {
 
 export default function Layout({ routes }: Props) {
   const [collapsed, setCollapsed] = React.useState(true);
-  const [darkMode, setDarkMode] = React.useState(false);
-
-  // get preferred theme from browser
-
-  useEffect(() => {
-    document.documentElement.setAttribute(
-      "data-bs-theme",
-      darkMode ? "dark" : "light"
-    );
-  }, [darkMode]);
 
   const toggleNavbar = () => setCollapsed(!collapsed);
-  const toggleDarkMode = () => setDarkMode(!darkMode);
   return (
     <div>
       {/* Navbar */}

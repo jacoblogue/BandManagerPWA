@@ -26,8 +26,9 @@ export default function EventCard({ event }: Props) {
   return (
     <Card className="mb-3">
       <CardHeader style={{ cursor: "pointer" }} onClick={toggleCollapse}>
-        <strong>{formatDate(event.date)}</strong>
-        <strong>{formatTime(event.date)}</strong>
+        <strong>
+          {formatDate(event.date)} {formatTime(event.date)}
+        </strong>
         <h3>{event.title}</h3>
         <Button color="primary" onClick={(e) => handleDelete(e)}>
           Delete
