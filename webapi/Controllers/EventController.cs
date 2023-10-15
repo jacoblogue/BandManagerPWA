@@ -43,10 +43,10 @@ namespace webapi.Controllers
             await _context.AddAsync(newEvent);
             await _context.SaveChangesAsync();
 
-            var message = new
+            var message = new EventMessage
             {
-                type = MessageType.EventAdded,
-                eventId = newEvent.Id
+                MessageType = MessageType.EventAdded,
+                Event = newEvent
             };
 
             await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
@@ -66,10 +66,10 @@ namespace webapi.Controllers
             _context.Remove(eventToDelete);
             await _context.SaveChangesAsync();
 
-            var message = new
+            var message = new EventMessage
             {
-                type = MessageType.EventDeleted,
-                eventId = id
+                MessageType = MessageType.EventDeleted,
+                EventId = id
             };
             await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
             return Ok();

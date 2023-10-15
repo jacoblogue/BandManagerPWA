@@ -6,9 +6,10 @@ import EventPage from "./components/events/EventPage";
 import * as signalR from "@microsoft/signalr";
 import { useEventStore } from "./state/eventStore";
 import { useThemeStore } from "./state/themeStore";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import ExistingEventModel from "./models/ExistingEventModel";
 import SignalRMessage from "./models/SignalRMessage";
+import { MessageTypeEnum } from "./models/MessageTypeEnum";
 
 const routes: RouteModel[] = [
   // {
@@ -25,7 +26,7 @@ const routes: RouteModel[] = [
 ];
 
 export default function App() {
-  const { replaceEvents, deleteEvent } = useEventStore();
+  const { replaceEvents, deleteEvent, addEvent } = useEventStore();
   const { setPreferredColorScheme, preferredColorScheme } = useThemeStore();
 
   console.log("App rendered.");
@@ -51,12 +52,19 @@ export default function App() {
 
         connection.on("ReceiveEventUpdate", (message: SignalRMessage) => {
           console.log("Received a SignalR message: ", message);
-          if (message && message.type === "eventDeleted" && message.eventId) {
+          if (message && message.type === MessageTypeEnum.DeleteEvent) {
             deleteEvent(message.eventId);
+          } else if (message && message.type === MessageTypeEnum.AddEvent) {
+            addEvent(message.event);
           } else {
-            axios.get<ExistingEventModel[]>(`/api/event`).then((response) => {
-              replaceEvents(response.data);
-            });
+            axios
+              .get<ExistingEventModel[]>(`/api/event`)
+              .then((response) => {
+                replaceEvents(response.data);
+              })
+              .catch((err: AxiosError) => {
+                console.error(err);
+              });
           }
         });
 
