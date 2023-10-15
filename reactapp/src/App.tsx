@@ -85,6 +85,9 @@ export default function App() {
     };
   }, []);
 
+  /**
+   * This `useEffect` hook listens for changes to the preferred color scheme and updates the Zustand store accordingly.
+   */
   useEffect(() => {
     // Initialize and update Zustand store based on media query
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
