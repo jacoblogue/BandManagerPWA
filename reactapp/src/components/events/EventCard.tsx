@@ -71,7 +71,7 @@ export default function EventCard({ event }: Props) {
           </p>
           <p>
             <strong>Date:</strong>
-            {event.date ? formatDate(event.date) : "No date specified"}
+            {event.date ? ` ${formatDate(event.date)}` : "No date specified"}
           </p>
           <p>
             <strong>Description:</strong> {event.description}
