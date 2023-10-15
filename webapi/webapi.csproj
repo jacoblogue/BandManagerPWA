@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BandManagerPWA.DataAccess\BandManagerPWA.DataAccess.csproj" />
+    <ProjectReference Include="..\BandManagerPWA.Utils\BandManagerPWA.Utils.csproj" />
   </ItemGroup>
 
 </Project>

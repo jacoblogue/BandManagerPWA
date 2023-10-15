@@ -11,7 +11,9 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "BandManagerPWA.DB", "BandMa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BandManagerPWA.DataAccess", "BandManagerPWA.DataAccess\BandManagerPWA.DataAccess.csproj", "{ECB8B0C6-707F-49F2-835E-0D37066BE6AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BandManagerPWA.Test", "BandManagerPWA.Test\BandManagerPWA.Test.csproj", "{1B3E1799-9E69-418B-8848-54AA9E2262EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BandManagerPWA.Test", "BandManagerPWA.Test\BandManagerPWA.Test.csproj", "{1B3E1799-9E69-418B-8848-54AA9E2262EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BandManagerPWA.Utils", "BandManagerPWA.Utils\BandManagerPWA.Utils.csproj", "{56B1BDB6-3242-4917-A071-6F6D8B743EFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{1B3E1799-9E69-418B-8848-54AA9E2262EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B3E1799-9E69-418B-8848-54AA9E2262EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B3E1799-9E69-418B-8848-54AA9E2262EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56B1BDB6-3242-4917-A071-6F6D8B743EFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56B1BDB6-3242-4917-A071-6F6D8B743EFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56B1BDB6-3242-4917-A071-6F6D8B743EFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56B1BDB6-3242-4917-A071-6F6D8B743EFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
