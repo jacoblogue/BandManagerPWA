@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Button } from "reactstrap";
+import { Container, Row, Col, Button, Spinner } from "reactstrap"; // import Spinner
 import EventList from "./EventList";
 import CreateEventForm from "./CreateEventForm";
 import axios from "axios";
@@ -9,9 +9,10 @@ import { useEventStore } from "@/state/eventStore";
 export default function EventPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = React.useState(false);
-  const { addEvent } = useEventStore();
+  const { addEvent, events } = useEventStore();
 
   useEffect(() => {
+    console.log("events", events);
     async function fetchEvents() {
       await axios.get("/api/event").then((response) => {
         response.data.forEach((event: ExistingEventModel) => {
@@ -32,6 +33,22 @@ export default function EventPage() {
     // show the form
     setShowForm(!showForm);
   };
+
+  if (loading) {
+    return (
+      <Container fluid>
+        <Row>
+          <Col xs={12}>
+            <h1 className="text-center">Events</h1>
+            <div className="text-center">
+              <Spinner color="primary" /> {/* add Spinner */}
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+
   return (
     <Container fluid>
       <Row>
