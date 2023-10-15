@@ -5,7 +5,7 @@ import CreateEventForm from "./CreateEventForm";
 import axios from "axios";
 import { useEventStore } from "@/state/eventStore";
 
-function EventPage() {
+export default function EventPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = React.useState(false);
   const { replaceEvents } = useEventStore();
@@ -69,4 +69,3 @@ function EventPage() {
     </Container>
   );
 }
-export default React.memo(EventPage);
