@@ -3,21 +3,35 @@ import { useEventStore } from "@/state/eventStore";
 import { formatDate, formatTime } from "@/utilities/dateUtils";
 import axios from "axios";
 import React, { useState } from "react";
-import { Card, CardHeader, CardBody, Button } from "reactstrap";
-
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+} from "reactstrap";
+import { BiDotsVertical } from "react-icons/bi";
 interface Props {
   event: ExistingEventModel;
 }
 
 export default function EventCard({ event }: Props) {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const { deleteEvent } = useEventStore();
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDelete = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
     e.stopPropagation();
     await axios.delete(`/api/event/${event.id}`);
@@ -26,13 +40,29 @@ export default function EventCard({ event }: Props) {
   return (
     <Card className="mb-3">
       <CardHeader style={{ cursor: "pointer" }} onClick={toggleCollapse}>
-        <strong>
-          {formatDate(event.date)} {formatTime(event.date)}
-        </strong>
-        <h3>{event.title}</h3>
-        <Button color="primary" onClick={(e) => handleDelete(e)}>
-          Delete
-        </Button>
+        <span className="d-flex justify-content-between align-items-center">
+          <strong>
+            {formatDate(event.date)} {formatTime(event.date)}
+            <h3 className="fs-4 me-auto">{event.title}</h3>
+          </strong>
+          <div className="d-flex align-items-center">
+            <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+              <DropdownToggle
+                tag="span"
+                data-toggle="dropdown"
+                aria-expanded={dropdownOpen}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <BiDotsVertical size={"1.3rem"} />
+              </DropdownToggle>
+              <DropdownMenu>
+                <DropdownItem onClick={(e) => handleDelete(e)}>
+                  Delete Event
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        </span>
       </CardHeader>
       {!isCollapsed && (
         <CardBody>
