@@ -3,21 +3,17 @@ import { Container, Row, Col, Button, Spinner } from "reactstrap"; // import Spi
 import EventList from "./EventList";
 import CreateEventForm from "./CreateEventForm";
 import axios from "axios";
-import ExistingEventModel from "@/models/ExistingEventModel";
 import { useEventStore } from "@/state/eventStore";
 
-export default function EventPage() {
+function EventPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = React.useState(false);
-  const { addEvent, events } = useEventStore();
+  const { replaceEvents } = useEventStore();
 
   useEffect(() => {
-    console.log("events", events);
     async function fetchEvents() {
       await axios.get("/api/event").then((response) => {
-        response.data.forEach((event: ExistingEventModel) => {
-          addEvent(event);
-        });
+        replaceEvents(response.data);
       });
       setLoading(false);
     }
@@ -73,3 +69,4 @@ export default function EventPage() {
     </Container>
   );
 }
+export default React.memo(EventPage);

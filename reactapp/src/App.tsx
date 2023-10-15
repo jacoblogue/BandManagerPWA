@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/common/Layout";
 import RouteModel from "./models/RouteModel";
@@ -71,7 +71,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    console.log(preferredColorScheme);
     // Initialize and update Zustand store based on media query
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const updateColorScheme = () => {

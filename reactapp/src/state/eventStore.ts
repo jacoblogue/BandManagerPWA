@@ -12,7 +12,7 @@ export const useEventStore = create<EventStore>()((set) => ({
   events: [],
   addEvent: (newEvent) => {
     // console log where this is called from
-    console.log("addEvent called from: ", new Error().stack);
+    console.log("addEventCalled");
     set((state) => {
       // Check for duplicate
       if (state.events.some((event) => event.id === newEvent.id)) {
