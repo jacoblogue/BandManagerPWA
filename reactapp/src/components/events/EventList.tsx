@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Button, Collapse, Container, Row } from "reactstrap";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Collapse,
+  Container,
+  Row,
+} from "reactstrap";
 import EventCard from "./EventCard";
 import { useEventStore } from "@/state/eventStore";
 import ExistingEventModel from "@/models/ExistingEventModel";
@@ -26,11 +34,15 @@ const groupEventsByMonth = (events: ExistingEventModel[]) => {
 
   return grouped;
 };
+// Set the current month to be open by default
+const currentMonth = new Date().toLocaleString("default", { month: "long" });
+const defaultOpenSections = { [currentMonth]: true };
 
 export default function EventList() {
   const { events } = useEventStore();
   const groupedEvents = groupEventsByMonth(events);
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const [openSections, setOpenSections] =
+    useState<Record<string, boolean>>(defaultOpenSections);
 
   /**
    * Toggle the visibility of a collapsible section.
@@ -39,19 +51,28 @@ export default function EventList() {
   const toggleSection = (month: string) => {
     setOpenSections((prev) => ({ ...prev, [month]: !prev[month] }));
   };
+
   return (
     <Container className="p-2 rounded" fluid>
       {Object.keys(groupedEvents).map((month) => (
-        <div className="text-center" key={month}>
-          <Button className="w-100 mb-2" onClick={() => toggleSection(month)}>
-            {month} {openSections[month] ? <BiChevronUp /> : <BiChevronDown />}
-          </Button>
+        <Card key={month} className="mb-2">
+          <CardHeader onClick={() => toggleSection(month)}>
+            <div className="d-flex justify-content-between align-items-center">
+              <h5 className="mb-0">{month}</h5>
+              <span>{groupedEvents[month].length} events</span>
+              <span>
+                {openSections[month] ? <BiChevronUp /> : <BiChevronDown />}
+              </span>
+            </div>
+          </CardHeader>
           <Collapse isOpen={openSections[month]}>
-            {groupedEvents[month].map((event) => (
-              <EventCard event={event} key={event.id} />
-            ))}
+            <CardBody>
+              {groupedEvents[month].map((event) => (
+                <EventCard event={event} key={event.id} />
+              ))}
+            </CardBody>
           </Collapse>
-        </div>
+        </Card>
       ))}
     </Container>
   );
