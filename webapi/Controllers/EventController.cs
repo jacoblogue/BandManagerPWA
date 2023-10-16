@@ -102,7 +102,9 @@ namespace webapi.Controllers
                 {
                     Id = Guid.NewGuid(),
                     Title = "Test Event 10",
-                    Description = "Test"
+                    Description = "Test",
+                    Location = "Test Event 10 Location",
+                    Date = DateTime.Now.AddDays(50)
                 }
             };
 

@@ -46,7 +46,7 @@ export default function EventPage() {
   }
 
   return (
-    <Container fluid>
+    <Container className="pb-5" fluid>
       <Row>
         <Col xs={1}></Col>
         <Col xs={10}>
