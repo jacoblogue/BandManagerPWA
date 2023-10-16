@@ -48,8 +48,8 @@ export default function EventPage() {
   return (
     <Container className="pb-5" fluid>
       <Row>
-        <Col xs={1}></Col>
-        <Col xs={10}>
+        <Col md={1}></Col>
+        <Col md={10}>
           <h1 className="text-center">Events</h1>
           {!showForm ? (
             <EventList />
@@ -57,7 +57,7 @@ export default function EventPage() {
             <CreateEventForm onFormSubmit={onFormSubmit} />
           )}
         </Col>
-        <Col xs={1}>
+        <Col md={1}>
           <Button
             style={{ position: "fixed", bottom: "1rem", right: "1rem" }}
             onClick={handleButtonClick}

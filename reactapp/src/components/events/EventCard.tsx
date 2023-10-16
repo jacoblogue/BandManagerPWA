@@ -38,7 +38,7 @@ export default function EventCard({ event }: Props) {
   };
 
   return (
-    <Card className="">
+    <Card className="mb-2">
       <CardHeader style={{ cursor: "pointer" }} onClick={toggleCollapse}>
         <span className="d-flex justify-content-between align-items-center">
           <strong>

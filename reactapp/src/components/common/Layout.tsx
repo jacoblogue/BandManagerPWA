@@ -57,7 +57,7 @@ export default function Layout({ routes }: Props) {
         </Collapse>
       </Navbar>
       {/* Main content */}
-      <div className="container mt-5">{<Outlet />}</div>
+      <div className="mt-5">{<Outlet />}</div>
     </div>
   );
 }

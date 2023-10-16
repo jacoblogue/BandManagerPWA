@@ -23,7 +23,10 @@ const groupEventsByMonth = (events: ExistingEventModel[]) => {
 
   events.forEach((event) => {
     const date = new Date(event.date); // Assuming event.date is in a Date-compatible format
-    const month = date.toLocaleString("default", { month: "long" });
+    const month = date.toLocaleString("default", {
+      month: "long",
+      year: "numeric",
+    });
 
     if (!grouped[month]) {
       grouped[month] = [];
@@ -35,7 +38,10 @@ const groupEventsByMonth = (events: ExistingEventModel[]) => {
   return grouped;
 };
 // Set the current month to be open by default
-const currentMonth = new Date().toLocaleString("default", { month: "long" });
+const currentMonth = new Date().toLocaleString("default", {
+  month: "long",
+  year: "numeric",
+});
 const defaultOpenSections = { [currentMonth]: true };
 
 export default function EventList() {
@@ -53,12 +59,14 @@ export default function EventList() {
   };
 
   return (
-    <Container className="p-2 rounded" fluid>
+    <Container className="rounded" fluid>
       {Object.keys(groupedEvents).map((month) => (
         <Card key={month} className="mb-2">
           <CardHeader onClick={() => toggleSection(month)}>
             <div className="d-flex justify-content-between align-items-center">
-              <h5 className="mb-0">{month}</h5>
+              <h5 className="mb-0">
+                {month} {}
+              </h5>
               <span>{groupedEvents[month].length} events</span>
               <span>
                 {openSections[month] ? <BiChevronUp /> : <BiChevronDown />}
