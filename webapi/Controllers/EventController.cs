@@ -48,7 +48,7 @@ namespace webapi.Controllers
                     Title = "Test Event 3",
                     Description = "Test Event 3 Description",
                     Location = "Test Event 3 Location",
-                    Date = DateTime.Now.AddDays(3)
+                    Date = DateTime.Now.AddDays(30)
                 },
                 new Event
                 {
@@ -56,7 +56,7 @@ namespace webapi.Controllers
                     Title = "Test Event 4",
                     Description = "Test Event 4 Description",
                     Location = "Test Event 4 Location",
-                    Date = DateTime.Now.AddDays(4)
+                    Date = DateTime.Now.AddDays(40)
                 },
                 new Event
                 {
@@ -64,7 +64,7 @@ namespace webapi.Controllers
                     Title = "Test Event 5",
                     Description = "Test Event 5 Description",
                     Location = "Test Event 5 Location",
-                    Date = DateTime.Now.AddDays(5)
+                    Date = DateTime.Now.AddDays(50)
                 },
                 new Event
                 {
@@ -72,7 +72,7 @@ namespace webapi.Controllers
                     Title = "Test Event 6",
                     Description = "Test Event 6 Description",
                     Location = "Test Event 6 Location",
-                    Date = DateTime.Now.AddDays(6)
+                    Date = DateTime.Now.AddDays(60)
                 },
                 new Event
                 {
@@ -105,7 +105,23 @@ namespace webapi.Controllers
                     Description = "Test",
                     Location = "Test Event 10 Location",
                     Date = DateTime.Now.AddDays(50)
-                }
+                },
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Test Event 11",
+                    Description = "Test Event 11 Description",
+                    Location = "Test Event 11 Location",
+                    Date = DateTime.Now.AddDays(11)
+                },
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Test Event 12",
+                    Description = "Test Event 12 Description",
+                    Location = "Test Event 12 Location",
+                    Date = DateTime.Now.AddDays(100)
+                },
             };
 
             return Ok(testEvents);
