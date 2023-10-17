@@ -4,6 +4,7 @@ import EventCard from "./EventCard";
 import { useEventStore } from "@/state/eventStore";
 import ExistingEventModel from "@/models/ExistingEventModel";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
+import StickyHeader from "../common/StickyHeader";
 
 /**
  * Group events by month and return an object where keys are month names
@@ -50,32 +51,23 @@ export default function EventList() {
     setOpenSections((prev) => ({ ...prev, [month]: !prev[month] }));
   };
 
+  const headerSubtitle = (month: string) => {
+    const numEvents = groupedEvents[month].length;
+    return numEvents === 1 ? "1 event" : `${numEvents} events`;
+  };
+
   return (
-    <CardColumns>
+    <div>
       {Object.keys(groupedEvents).map((month) => (
-        <Card key={month} className="mb-2">
-          <CardHeader onClick={() => toggleSection(month)}>
-            <div className="d-flex justify-content-between align-items-center">
-              <h5 className="mb-0">{month}</h5>
-              <span>
-                {groupedEvents[month].length === 1
-                  ? "1 event"
-                  : `${groupedEvents[month].length} events`}
-              </span>
-              <span>
-                {openSections[month] ? <BiChevronUp /> : <BiChevronDown />}
-              </span>
-            </div>
-          </CardHeader>
-          <Collapse isOpen={openSections[month]}>
-            <CardBody>
-              {groupedEvents[month].map((event) => (
-                <EventCard event={event} key={event.id} />
-              ))}
-            </CardBody>
-          </Collapse>
-        </Card>
+        <div key={month}>
+          {/* Sticky Header */}
+          <StickyHeader title={month} subtitle={headerSubtitle(month)} />
+          {/* Events */}
+          {groupedEvents[month].map((event) => (
+            <EventCard event={event} key={event.id} />
+          ))}
+        </div>
       ))}
-    </CardColumns>
+    </div>
   );
 }
