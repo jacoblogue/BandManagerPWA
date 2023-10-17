@@ -44,6 +44,7 @@ export default function EventCard({ event }: Props) {
           <strong>
             {formatDate(event.date)} {formatTime(event.date)}
             <h3 className="fs-4 me-auto">{event.title}</h3>
+            <h4 className="fs-5">{event.location}</h4>
           </strong>
           <div className="d-flex align-items-center">
             <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>

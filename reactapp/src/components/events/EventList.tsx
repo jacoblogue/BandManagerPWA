@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Collapse,
-  Container,
-  Row,
-} from "reactstrap";
+import { Card, CardBody, CardColumns, CardHeader, Collapse } from "reactstrap";
 import EventCard from "./EventCard";
 import { useEventStore } from "@/state/eventStore";
 import ExistingEventModel from "@/models/ExistingEventModel";
@@ -59,15 +51,17 @@ export default function EventList() {
   };
 
   return (
-    <Container className="rounded" fluid>
+    <CardColumns>
       {Object.keys(groupedEvents).map((month) => (
         <Card key={month} className="mb-2">
           <CardHeader onClick={() => toggleSection(month)}>
             <div className="d-flex justify-content-between align-items-center">
-              <h5 className="mb-0">
-                {month} {}
-              </h5>
-              <span>{groupedEvents[month].length} events</span>
+              <h5 className="mb-0">{month}</h5>
+              <span>
+                {groupedEvents[month].length === 1
+                  ? "1 event"
+                  : `${groupedEvents[month].length} events`}
+              </span>
               <span>
                 {openSections[month] ? <BiChevronUp /> : <BiChevronDown />}
               </span>
@@ -82,6 +76,6 @@ export default function EventList() {
           </Collapse>
         </Card>
       ))}
-    </Container>
+    </CardColumns>
   );
 }
