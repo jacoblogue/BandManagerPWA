@@ -1,10 +1,10 @@
 import RouteModel from "@/models/RouteModel";
-import React, { useState } from "react";
+import React from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import { Navbar, NavbarBrand, Nav, NavItem, Button } from "reactstrap";
 import ThemeToggler from "./ThemeToggler";
 import { useThemeStore } from "@/state/themeStore";
-import { BiPlus } from "react-icons/bi";
+import { BiCalendar, BiHome, BiPlusCircle } from "react-icons/bi";
 
 interface Props {
   routes: RouteModel[];
@@ -42,7 +42,7 @@ export default function Layout({ routes }: Props) {
         <Nav className="w-100 d-flex justify-content-around ">
           <NavItem className="">
             <NavLink to="/home" className="nav-link disabled">
-              Home
+              <BiHome size={"1.4rem"} />
             </NavLink>
           </NavItem>
           <NavItem className="">
@@ -54,17 +54,17 @@ export default function Layout({ routes }: Props) {
                 /* Handle add new event */
               }}
             >
-              <BiPlus size={"1.6rem"} />
+              <BiPlusCircle size={"1.6rem"} />
             </Button>
           </NavItem>
           <NavItem>
-            <NavLink // change to "/events
-              to="/"
+            <NavLink
+              to="/calendar"
               className={({ isActive }) =>
-                isActive ? "nav-link disabled" : "nav-link"
+                isActive ? "nav-link disabled" : "nav-link disabled"
               }
             >
-              Events
+              <BiCalendar size={"1.4rem"} />
             </NavLink>
           </NavItem>
         </Nav>

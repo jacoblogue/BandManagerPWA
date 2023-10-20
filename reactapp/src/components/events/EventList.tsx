@@ -39,6 +39,7 @@ const defaultOpenSections = { [currentMonth]: true };
 
 export default function EventList() {
   const { events } = useEventStore();
+
   const groupedEvents = groupEventsByMonth(events);
   const [openSections, setOpenSections] =
     useState<Record<string, boolean>>(defaultOpenSections);

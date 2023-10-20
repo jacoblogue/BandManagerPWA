@@ -33,6 +33,7 @@ interface Props {
 }
 const todayAtMidnight = new Date();
 todayAtMidnight.setHours(0, 0, 0, 0);
+
 const validationSchema = Yup.object({
   title: Yup.string()
     .required("Title is required")
