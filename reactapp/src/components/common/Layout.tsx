@@ -1,10 +1,11 @@
 import RouteModel from "@/models/RouteModel";
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import { Navbar, NavbarBrand, Nav, NavItem, Button } from "reactstrap";
 import ThemeToggler from "./ThemeToggler";
 import { useThemeStore } from "@/state/themeStore";
 import { BiCalendar, BiHome, BiPlusCircle } from "react-icons/bi";
+import CreateEventModal from "../events/CreateEventModal";
 
 interface Props {
   routes: RouteModel[];
@@ -12,6 +13,7 @@ interface Props {
 
 export default function Layout({ routes }: Props) {
   const { preferredColorScheme } = useThemeStore();
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
     <div className="d-flex flex-column" style={{ height: "100vh" }}>
@@ -27,6 +29,7 @@ export default function Layout({ routes }: Props) {
           </NavItem>
         </Nav>
       </Navbar>
+
       {/* Main content */}
       <div className="flex-grow-1 mb-5">
         <Outlet />
@@ -46,13 +49,9 @@ export default function Layout({ routes }: Props) {
             </NavLink>
           </NavItem>
           <NavItem className="">
-            {/* Assuming you have some logic to handle adding new events, 
-            you can attach that to the onClick handler of this button */}
             <Button
               color={preferredColorScheme}
-              onClick={() => {
-                /* Handle add new event */
-              }}
+              onClick={() => setIsModalOpen(true)}
             >
               <BiPlusCircle size={"1.6rem"} />
             </Button>
@@ -69,6 +68,7 @@ export default function Layout({ routes }: Props) {
           </NavItem>
         </Nav>
       </Navbar>
+      <CreateEventModal isOpen={isModalOpen} setModal={setIsModalOpen} />
     </div>
   );
 }

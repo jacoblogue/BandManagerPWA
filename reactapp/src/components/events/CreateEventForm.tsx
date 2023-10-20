@@ -1,5 +1,4 @@
 import NewEventModel from "@/models/NewEventModel";
-import { useEventStore } from "@/state/eventStore";
 import axios, { AxiosError } from "axios";
 import {
   setYear,
@@ -53,8 +52,6 @@ const validationSchema = Yup.object({
 });
 
 export default function CreateEventForm({ onFormSubmit }: Props) {
-  const { addEvent } = useEventStore();
-
   const createEvent = (newEvent: NewEventModel) => {
     axios
       .post("/api/event", newEvent)
@@ -313,7 +310,9 @@ export default function CreateEventForm({ onFormSubmit }: Props) {
               }}
             </Field>
           </FormGroup>
-          <Button type="submit">Create Event</Button>
+          <div className="text-center">
+            <Button type="submit">Create Event</Button>
+          </div>
         </Form>
       )}
     </Formik>
