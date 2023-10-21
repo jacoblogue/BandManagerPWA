@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using webapi.utilities;
-using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,8 +20,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.Authority = $"https://dev-f0jsmjla2lggonlk.us.auth0.com/";
+        options.Audience = $"https://bandmanager/auth0";
         options.TokenValidationParameters = new TokenValidationParameters
         {
+            NameClaimType = ClaimTypes.NameIdentifier,
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,

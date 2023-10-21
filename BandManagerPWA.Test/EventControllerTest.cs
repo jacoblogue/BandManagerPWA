@@ -1,9 +1,8 @@
 using BandManagerPWA.DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using webapi.Controllers;
+using webapi.utilities;
 
 namespace BandManagerPWA.Test
 {
@@ -21,7 +20,8 @@ namespace BandManagerPWA.Test
                 .UseInMemoryDatabase(databaseName: "BandManagerPWA")
                 .Options;
             _context = new ApplicationDbContext(options);
-            _controller = new EventController(_context);
+            var hubContext = new FakeHubContext<EventHub>();
+            _controller = new EventController(_context, hubContext);
         }
 
         [TestMethod]
