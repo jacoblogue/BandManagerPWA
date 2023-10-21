@@ -21,4 +21,12 @@
     <ProjectReference Include="..\BandManagerPWA.Utils\BandManagerPWA.Utils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="E:\vsProjects\BandManagerPWA\webapi\auth\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="E:\vsProjects\BandManagerPWA\webapi\auth\.editorconfig" />
+  </ItemGroup>
+
 </Project>

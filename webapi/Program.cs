@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using webapi.utilities;
 using System.Security.Claims;
+using webapi.auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,15 +26,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             NameClaimType = ClaimTypes.NameIdentifier,
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("read:events", policy => policy.Requirements.Add(new HasScopeRequirement("read:events", $"https://dev-f0jsmjla2lggonlk.us.auth0.com/")));
+    options.AddPolicy("create:events", policy => policy.Requirements.Add(new HasScopeRequirement("create:events", $"https://dev-f0jsmjla2lggonlk.us.auth0.com/")));
+    options.AddPolicy("delete:events", policy => policy.Requirements.Add(new HasScopeRequirement("delete:events", $"https://dev-f0jsmjla2lggonlk.us.auth0.com/")));
+});
 
 var app = builder.Build();
 
