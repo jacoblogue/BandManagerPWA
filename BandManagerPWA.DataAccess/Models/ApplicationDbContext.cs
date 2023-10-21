@@ -24,19 +24,31 @@ namespace BandManagerPWA.DataAccess.Models
         {
             var entries = ChangeTracker
                 .Entries()
-                .Where(e => e.Entity is BaseEntity && (
-                        e.State == EntityState.Added
-                        || e.State == EntityState.Modified));
+                .Where(e => e.Entity is BaseEntity || e.Entity is ApplicationUser)
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
 
             foreach (var entityEntry in entries)
             {
-                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.UtcNow;
-
-                if (entityEntry.State == EntityState.Added)
+                if (entityEntry.Entity is BaseEntity baseEntity)
                 {
-                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.UtcNow;
+                    baseEntity.UpdatedDate = DateTime.UtcNow;
+
+                    if (entityEntry.State == EntityState.Added)
+                    {
+                        baseEntity.CreatedDate = DateTime.UtcNow;
+                    }
+                }
+                else if (entityEntry.Entity is ApplicationUser applicationUser)
+                {
+                    applicationUser.UpdatedDate = DateTime.UtcNow;
+
+                    if (entityEntry.State == EntityState.Added)
+                    {
+                        applicationUser.CreatedDate = DateTime.UtcNow;
+                    }
                 }
             }
+
         }
     }
 }

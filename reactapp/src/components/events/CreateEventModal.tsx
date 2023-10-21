@@ -1,7 +1,6 @@
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import React from "react";
 import CreateEventForm from "./CreateEventForm";
-import { BiX } from "react-icons/bi";
 
 interface Props {
   isOpen: boolean;
