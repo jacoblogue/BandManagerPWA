@@ -25,7 +25,7 @@ namespace BandManagerPWA.Test
         }
 
         [TestMethod]
-        public async Task CreatesNewEvent()
+        public async Task Create_CreatesNewEvent()
         {
             // Arrange
             var newEvent = new webapi.Models.EventDTO
@@ -52,7 +52,7 @@ namespace BandManagerPWA.Test
         }
 
         [TestMethod]
-        public async Task DeletesEvent()
+        public async Task Delete_DeletesEvent()
         {
             // Arrange
             var newEvent = new Event
@@ -74,7 +74,7 @@ namespace BandManagerPWA.Test
         }
 
         [TestMethod]
-        public async Task GetsEvents()
+        public async Task Get_GetsEvents()
         {
             // Arrange
             var newEvent = new Event

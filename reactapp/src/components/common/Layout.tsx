@@ -44,7 +44,7 @@ export default function Layout({ routes }: Props) {
       >
         <Nav className="w-100 d-flex justify-content-around ">
           <NavItem className="">
-            <NavLink to="/home" className="nav-link disabled">
+            <NavLink to="/" className="nav-link disabled">
               <BiHome size={"1.4rem"} />
             </NavLink>
           </NavItem>

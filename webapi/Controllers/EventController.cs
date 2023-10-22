@@ -1,4 +1,5 @@
 ﻿using BandManagerPWA.DataAccess.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ using webapi.utilities;
 namespace webapi.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class EventController : ControllerBase
     {
         private ApplicationDbContext _context;
@@ -22,7 +23,6 @@ namespace webapi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetEvents()
         {
-            var events = await _context.Events.ToListAsync();
 
             var testEvents = new List<Event>
             {
@@ -124,7 +124,9 @@ namespace webapi.Controllers
                 },
             };
 
-            return Ok(testEvents);
+            var events = await _context.Events.ToListAsync();
+
+            return Ok(events);
         }
 
         [HttpPost]

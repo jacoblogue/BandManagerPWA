@@ -5,10 +5,19 @@ import App from "./App.js";
 import "./index.css";
 import "./custom-theme.scss";
 import { registerSW } from "virtual:pwa-register";
+import { Auth0Provider } from "@auth0/auth0-react";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <Auth0Provider
+      domain="dev-f0jsmjla2lggonlk.us.auth0.com"
+      clientId="D5EBryOla6CajEVzFYHQWUMr6h2vDlwU"
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+      }}
+    >
+      <App />
+    </Auth0Provider>
   </React.StrictMode>
 );
 

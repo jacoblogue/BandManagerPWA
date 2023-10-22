@@ -10,16 +10,17 @@ import axios, { AxiosError } from "axios";
 import ExistingEventModel from "./models/ExistingEventModel";
 import SignalRMessage from "./models/SignalRMessage";
 import { MessageTypeEnum } from "./models/MessageTypeEnum";
+import Home from "./components/home/Home";
 
 const routes: RouteModel[] = [
-  // {
-  //   path: "/",
-  //   element: <Home />,
-  //   exact: true,
-  //   name: "Home",
-  // },
   {
     path: "/",
+    element: <Home />,
+    exact: true,
+    name: "Home",
+  },
+  {
+    path: "/events",
     element: <EventPage />,
     name: "Events",
   },
