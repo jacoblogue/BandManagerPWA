@@ -7,11 +7,14 @@ import "./custom-theme.scss";
 import { registerSW } from "virtual:pwa-register";
 import { Auth0Provider } from "@auth0/auth0-react";
 
+const domain = import.meta.env.VITE_REACT_APP_AUTH0_DOMAIN;
+const clientId = import.meta.env.VITE_REACT_APP_AUTH0_CLIENT_ID;
+console.log("cheese", domain, clientId);
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Auth0Provider
-      domain="dev-f0jsmjla2lggonlk.us.auth0.com"
-      clientId="D5EBryOla6CajEVzFYHQWUMr6h2vDlwU"
+      domain={domain}
+      clientId={clientId}
       authorizationParams={{
         redirect_uri: window.location.origin,
       }}

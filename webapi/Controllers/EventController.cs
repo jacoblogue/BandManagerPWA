@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Writers;
 using webapi.Models;
 using webapi.utilities;
 
 namespace webapi.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController, Authorize]
+    [ApiController]
     public class EventController : ControllerBase
     {
         private ApplicationDbContext _context;
@@ -20,7 +21,7 @@ namespace webapi.Controllers
             _hubContext = hubContext;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Policy = "read:events") ]
         public async Task<IActionResult> GetEvents()
         {
 
