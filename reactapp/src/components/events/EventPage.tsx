@@ -7,7 +7,8 @@ import { useEventStore } from "@/state/eventStore";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default function EventPage() {
-  const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
+  const apiAudience = import.meta.env.VITE_API_AUDIENCE;
+  const { getAccessTokenSilently } = useAuth0();
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = React.useState(false);
   const { replaceEvents } = useEventStore();
@@ -17,13 +18,10 @@ export default function EventPage() {
       try {
         const accessToken = await getAccessTokenSilently({
           authorizationParams: {
-            audience: "https://bandmanager/auth0",
+            audience: apiAudience,
             scope: "read:events",
           },
         });
-
-        console.log(accessToken);
-
         await axios
           .get("/api/event", {
             headers: {

@@ -19,7 +19,7 @@ export default function Layout({ routes }: Props) {
     <div className="d-flex flex-column" style={{ height: "100vh" }}>
       {/* Top Navbar */}
       <Navbar color={preferredColorScheme} light expand="lg">
-        <NavbarBrand href="/">BM</NavbarBrand>
+        <NavbarBrand>BM</NavbarBrand>
         <Nav className="me-auto" navbar>
           {routes.map((route) => (
             <NavItem key={route.name}></NavItem>
@@ -44,7 +44,7 @@ export default function Layout({ routes }: Props) {
       >
         <Nav className="w-100 d-flex justify-content-around ">
           <NavItem className="">
-            <NavLink to="/" className="nav-link disabled">
+            <NavLink to="/" className="nav-link">
               <BiHome size={"1.4rem"} />
             </NavLink>
           </NavItem>

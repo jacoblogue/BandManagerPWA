@@ -7,9 +7,8 @@ import "./custom-theme.scss";
 import { registerSW } from "virtual:pwa-register";
 import { Auth0Provider } from "@auth0/auth0-react";
 
-const domain = import.meta.env.VITE_REACT_APP_AUTH0_DOMAIN;
-const clientId = import.meta.env.VITE_REACT_APP_AUTH0_CLIENT_ID;
-console.log("cheese", domain, clientId);
+const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Auth0Provider

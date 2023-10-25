@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Writers;
 using webapi.Models;
 using webapi.utilities;
 
@@ -21,7 +20,7 @@ namespace webapi.Controllers
             _hubContext = hubContext;
         }
 
-        [HttpGet, Authorize(Policy = "read:events") ]
+        [HttpGet, Authorize(Policy = "read:events")]
         public async Task<IActionResult> GetEvents()
         {
 
@@ -130,7 +129,7 @@ namespace webapi.Controllers
             return Ok(events);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "create:events")]
         public async Task<IActionResult> CreateEvent([FromBody] EventDTO incomingEvent)
         {
             var newEvent = new Event
@@ -156,7 +155,7 @@ namespace webapi.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Policy = "delete:events")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var eventToDelete = await _context.Events.FindAsync(id);

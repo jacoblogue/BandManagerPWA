@@ -1,5 +1,4 @@
 import ExistingEventModel from "@/models/ExistingEventModel";
-import { useEventStore } from "@/state/eventStore";
 import { formatDate, formatTime } from "@/utilities/dateUtils";
 import axios from "axios";
 import React, { useState } from "react";
@@ -7,21 +6,23 @@ import {
   Card,
   CardHeader,
   CardBody,
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
 } from "reactstrap";
 import { BiDotsVertical } from "react-icons/bi";
+import { useAuth0 } from "@auth0/auth0-react";
 interface Props {
   event: ExistingEventModel;
 }
 
 export default function EventCard({ event }: Props) {
   const [isCollapsed, setIsCollapsed] = useState(true);
-
+  const { getAccessTokenSilently, loginWithRedirect, getAccessTokenWithPopup } =
+    useAuth0();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const audience = import.meta.env.VITE_API_AUDIENCE;
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -34,7 +35,20 @@ export default function EventCard({ event }: Props) {
   const handleDelete = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
     e.stopPropagation();
-    await axios.delete(`/api/event/${event.id}`);
+    try {
+      const accessToken = await getAccessTokenSilently({
+        authorizationParams: {
+          audience: audience,
+          scope: "delete:events",
+        },
+      });
+
+      await axios.delete(`/api/event/${event.id}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+    } catch (e: any) {
+      console.error(e);
+    }
   };
 
   return (

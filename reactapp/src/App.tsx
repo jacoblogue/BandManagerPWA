@@ -11,6 +11,7 @@ import ExistingEventModel from "./models/ExistingEventModel";
 import SignalRMessage from "./models/SignalRMessage";
 import { MessageTypeEnum } from "./models/MessageTypeEnum";
 import Home from "./components/home/Home";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const routes: RouteModel[] = [
   {
@@ -29,8 +30,8 @@ const routes: RouteModel[] = [
 export default function App() {
   const { replaceEvents, deleteEvent, addEvent } = useEventStore();
   const { setPreferredColorScheme, preferredColorScheme } = useThemeStore();
-
-  console.log("App rendered.");
+  const { getAccessTokenSilently } = useAuth0();
+  const apiAudience = import.meta.env.VITE_API_AUDIENCE;
 
   /**
    * This `useEffect` hook establishes a SignalR connection to the server and listens for updates to events.
@@ -58,13 +59,29 @@ export default function App() {
           } else if (message && message.type === MessageTypeEnum.AddEvent) {
             addEvent(message.event);
           } else {
-            axios
-              .get<ExistingEventModel[]>(`/api/event`)
-              .then((response) => {
-                replaceEvents(response.data);
+            getAccessTokenSilently({
+              authorizationParams: {
+                audience: apiAudience,
+                scope: "read:events",
+              },
+            })
+              .then(async (accessToken) => {
+                try {
+                  const response = await axios.get<ExistingEventModel[]>(
+                    `/api/event`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                      },
+                    }
+                  );
+                  replaceEvents(response.data);
+                } catch (err) {
+                  console.error(err);
+                }
               })
-              .catch((err: AxiosError) => {
-                console.error(err);
+              .catch((error) => {
+                console.error(error);
               });
           }
         });

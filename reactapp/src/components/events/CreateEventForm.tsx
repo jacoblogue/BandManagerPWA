@@ -1,4 +1,5 @@
 import NewEventModel from "@/models/NewEventModel";
+import { useAuth0 } from "@auth0/auth0-react";
 import axios, { AxiosError } from "axios";
 import {
   setYear,
@@ -52,13 +53,25 @@ const validationSchema = Yup.object({
 });
 
 export default function CreateEventForm({ onFormSubmit }: Props) {
-  const createEvent = (newEvent: NewEventModel) => {
-    axios
-      .post("/api/event", newEvent)
-      .then((response) => {})
-      .catch((error: AxiosError) => {
-        console.log(error);
+  const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
+  const apiAudience = import.meta.env.VITE_API_AUDIENCE;
+
+  const createEvent = async (newEvent: NewEventModel) => {
+    try {
+      const accessToken = await getAccessTokenSilently({
+        authorizationParams: { audience: apiAudience, scope: "create:events" },
       });
+
+      await axios
+        .post("/api/event", newEvent, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+        .catch((error: AxiosError) => {
+          console.error(error);
+        });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const customHandleChange = (
