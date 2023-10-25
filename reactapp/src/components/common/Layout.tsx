@@ -1,11 +1,11 @@
 import RouteModel from "@/models/RouteModel";
 import React, { useState } from "react";
-import { Outlet, NavLink } from "react-router-dom";
-import { Navbar, NavbarBrand, Nav, NavItem, Button } from "reactstrap";
+import { Outlet } from "react-router-dom";
+import { Navbar, NavbarBrand, Nav, NavItem } from "reactstrap";
 import ThemeToggler from "./ThemeToggler";
 import { useThemeStore } from "@/state/themeStore";
-import { BiCalendar, BiHome, BiPlusCircle } from "react-icons/bi";
 import CreateEventModal from "../events/CreateEventModal";
+import BottomNavbar from "./nav/BottomNavbar";
 
 interface Props {
   routes: RouteModel[];
@@ -36,38 +36,7 @@ export default function Layout({ routes }: Props) {
       </div>
 
       {/* Bottom Navbar */}
-      <Navbar
-        className="border-top"
-        fixed="bottom"
-        color={preferredColorScheme}
-        expand="lg"
-      >
-        <Nav className="w-100 d-flex justify-content-around ">
-          <NavItem className="">
-            <NavLink to="/" className="nav-link">
-              <BiHome size={"1.4rem"} />
-            </NavLink>
-          </NavItem>
-          <NavItem className="">
-            <Button
-              color={preferredColorScheme}
-              onClick={() => setIsModalOpen(true)}
-            >
-              <BiPlusCircle size={"1.6rem"} />
-            </Button>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              to="/calendar"
-              className={({ isActive }) =>
-                isActive ? "nav-link disabled" : "nav-link disabled"
-              }
-            >
-              <BiCalendar size={"1.4rem"} />
-            </NavLink>
-          </NavItem>
-        </Nav>
-      </Navbar>
+      <BottomNavbar setIsModalOpen={setIsModalOpen} />
       <CreateEventModal isOpen={isModalOpen} setModal={setIsModalOpen} />
     </div>
   );

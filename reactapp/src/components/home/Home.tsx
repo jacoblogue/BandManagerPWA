@@ -9,6 +9,7 @@ export default function Home() {
     <Container>
       <h1 className="display-1">Home</h1>
       <p className="lead">Welcome to the home page.</p>
+      {/* Trying loginWithPopup during dev to see if that mitigates the Consent issues */}
       <Button onClick={() => loginWithPopup()}>Log In</Button>
       <Button
         onClick={() =>
