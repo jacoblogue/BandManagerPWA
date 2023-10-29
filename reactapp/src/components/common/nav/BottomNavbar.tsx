@@ -1,8 +1,14 @@
 import { useThemeStore } from "@/state/themeStore";
 import React from "react";
-import { BiHome, BiPlusCircle, BiCalendar } from "react-icons/bi";
+import {
+  BiPlusCircle,
+  BiCalendar,
+  BiCalendarEvent,
+  BiCalendarPlus,
+} from "react-icons/bi";
 import { NavLink } from "react-router-dom";
 import { Navbar, Nav, NavItem, Button } from "reactstrap";
+import styles from "./BottomNavbar.module.css";
 
 interface Props {
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,18 +29,22 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
         <NavItem className="">
           <NavLink to="/" className="nav-link">
             <span className="d-flex flex-column justify-content-center align-items-center">
-              <BiHome size={"1.6rem"} />
-              Home
+              <BiCalendarEvent size={"1.6rem"} />
+              Events
             </span>
           </NavLink>
         </NavItem>
         <NavItem className="">
           <Button
-            color={preferredColorScheme}
+            className={`${styles.newEventButton} text-${
+              preferredColorScheme === "dark" ? "light" : "dark"
+            }`}
+            color={"link"}
             onClick={() => setIsModalOpen(true)}
+            link
           >
             <span className="d-flex flex-column justify-content-center align-items-center">
-              <BiPlusCircle size={"1.6rem"} />
+              <BiCalendarPlus size={"1.6rem"} />
               New Event
             </span>
           </Button>
@@ -49,7 +59,7 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
           >
             <span className="d-flex flex-column justify-content-center align-items-center">
               <BiCalendar size={"1.6rem"} />
-              Events
+              Calendar
             </span>
           </NavLink>
         </NavItem>
