@@ -1,25 +1,32 @@
 import React from "react";
-import { Button, Container } from "reactstrap";
+import { Col, Container, Row } from "reactstrap";
 import { useAuth0 } from "@auth0/auth0-react";
-import Profile from "@/profile/Profile";
+import LoginButton from "../auth/LoginButton";
+import LogoutButton from "../auth/LogoutButton";
 
 export default function Home() {
-  const { loginWithRedirect, logout, loginWithPopup } = useAuth0();
+  const { isAuthenticated } = useAuth0();
   return (
-    <Container>
-      <h1 className="display-1">Home</h1>
-      <p className="lead">Welcome to the home page.</p>
-      {/* Trying loginWithPopup during dev to see if that mitigates the Consent issues */}
-      <Button onClick={() => loginWithPopup()}>Log In</Button>
-      <Button
-        onClick={() =>
-          logout({ logoutParams: { returnTo: window.location.origin } })
-        }
-      >
-        Log out
-      </Button>
-
-      <Profile />
+    <Container
+      fluid
+      className="d-flex flex-column justify-content-center"
+      style={{ height: "75vh" }}
+    >
+      <Row>
+        <Col>
+          <div className="text-center">
+            <h1>Welcome to Band Manager</h1>
+            <p className="fs-3">Please log in</p>
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <div className="text-center">
+            {isAuthenticated ? <LogoutButton /> : <LoginButton />}
+          </div>
+        </Col>
+      </Row>
     </Container>
   );
 }
