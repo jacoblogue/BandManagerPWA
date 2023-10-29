@@ -27,7 +27,7 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
     >
       <Nav className="w-100 d-flex justify-content-around ">
         <NavItem className="">
-          <NavLink to="/" className="nav-link">
+          <NavLink to="/events" className="nav-link">
             <span className="d-flex flex-column justify-content-center align-items-center">
               <BiCalendarEvent size={"1.6rem"} />
               Events
@@ -41,7 +41,6 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
             }`}
             color={"link"}
             onClick={() => setIsModalOpen(true)}
-            link
           >
             <span className="d-flex flex-column justify-content-center align-items-center">
               <BiCalendarPlus size={"1.6rem"} />

@@ -2,7 +2,6 @@ import React from "react";
 import { Col, Container, Row } from "reactstrap";
 import { useAuth0 } from "@auth0/auth0-react";
 import LoginButton from "../auth/LoginButton";
-import LogoutButton from "../auth/LogoutButton";
 
 export default function Home() {
   const { isAuthenticated } = useAuth0();
@@ -23,7 +22,7 @@ export default function Home() {
       <Row>
         <Col>
           <div className="text-center">
-            {isAuthenticated ? <LogoutButton /> : <LoginButton />}
+            {!isAuthenticated && <LoginButton />}
           </div>
         </Col>
       </Row>

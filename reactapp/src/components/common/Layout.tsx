@@ -7,6 +7,7 @@ import { useThemeStore } from "@/state/themeStore";
 import CreateEventModal from "../events/CreateEventModal";
 import BottomNavbar from "./nav/BottomNavbar";
 import { useAuth0 } from "@auth0/auth0-react";
+import LogoutButton from "../auth/LogoutButton";
 
 interface Props {
   routes: RouteModel[];
@@ -30,6 +31,9 @@ export default function Layout({ routes }: Props) {
               <ThemeToggler />
             </NavItem>
           </Nav>
+          <div>
+            <LogoutButton />
+          </div>
         </Navbar>
       )}
       {/* Main content */}
