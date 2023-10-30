@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/common/Layout";
 import RouteModel from "./models/RouteModel";
@@ -6,12 +6,14 @@ import EventPage from "./components/events/EventPage";
 import * as signalR from "@microsoft/signalr";
 import { useEventStore } from "./state/eventStore";
 import { useThemeStore } from "./state/themeStore";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import ExistingEventModel from "./models/ExistingEventModel";
 import SignalRMessage from "./models/SignalRMessage";
 import { MessageTypeEnum } from "./models/MessageTypeEnum";
 import Home from "./components/home/Home";
-import { useAuth0 } from "@auth0/auth0-react";
+import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import CallbackPage from "./components/auth/CallbackPage";
+import Auth0ProviderWithNavigate from "./components/auth/Auth0ProviderWithNavigate";
 
 const routes: RouteModel[] = [
   {
@@ -25,6 +27,11 @@ const routes: RouteModel[] = [
     element: <EventPage />,
     name: "Events",
   },
+  {
+    path: "/callback",
+    element: <CallbackPage />,
+    name: "Callback",
+  },
 ];
 
 export default function App() {
@@ -32,6 +39,9 @@ export default function App() {
   const { setPreferredColorScheme, preferredColorScheme } = useThemeStore();
   const { getAccessTokenSilently } = useAuth0();
   const apiAudience = import.meta.env.VITE_API_AUDIENCE;
+  const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+  const redirectUri = import.meta.env.VITE_AUTH0_CALLBACK_URL;
 
   /**
    * This `useEffect` hook establishes a SignalR connection to the server and listens for updates to events.
@@ -126,13 +136,19 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<Layout routes={routes} />}>
-          {routes.map((route) => (
-            <Route key={route.path} path={route.path} element={route.element} />
-          ))}
-        </Route>
-      </Routes>
+      <Auth0ProviderWithNavigate>
+        <Routes>
+          <Route element={<Layout routes={routes} />}>
+            {routes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
+            ))}
+          </Route>
+        </Routes>
+      </Auth0ProviderWithNavigate>
     </BrowserRouter>
   );
 }

@@ -15,7 +15,7 @@ export default function Home() {
         <Col>
           <div className="text-center">
             <h1>Welcome to Band Manager</h1>
-            <p className="fs-3">Please log in</p>
+            {!isAuthenticated && <p className="fs-3">Please log in</p>}
           </div>
         </Col>
       </Row>

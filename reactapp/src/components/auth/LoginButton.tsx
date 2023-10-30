@@ -10,7 +10,9 @@ export default function LoginButton() {
       await loginWithRedirect({
         authorizationParams: {
           prompt: "consent",
-          redirect_uri: window.location.origin + "/events",
+        },
+        appState: {
+          returnTo: "/events",
         },
       });
     } catch (error) {
