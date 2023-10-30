@@ -5,19 +5,22 @@ import { Button } from "reactstrap";
 export default function LoginButton() {
   const { loginWithRedirect, loginWithPopup } = useAuth0();
 
+  const handleLogin = async () => {
+    try {
+      await loginWithRedirect({
+        authorizationParams: {
+          prompt: "consent",
+          redirect_uri: window.location.origin + "/events",
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   /* Trying loginWithPopup during dev to see if that mitigates the Consent issues */
   return (
-    <Button
-      size="lg"
-      onClick={() =>
-        loginWithRedirect({
-          authorizationParams: {
-            prompt: "consent",
-            redirect_uri: window.location.origin + "/events",
-          },
-        })
-      }
-    >
+    <Button size="lg" onClick={handleLogin}>
       Log In
     </Button>
   );
