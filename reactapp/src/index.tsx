@@ -5,11 +5,17 @@ import App from "./App.js";
 import "./index.css";
 import "./custom-theme.scss";
 import { registerSW } from "virtual:pwa-register";
+import Auth0ProviderWithNavigate from "./components/auth/Auth0ProviderWithNavigate.js";
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <BrowserRouter>
+    <React.StrictMode>
+      <Auth0ProviderWithNavigate>
+        <App />
+      </Auth0ProviderWithNavigate>
+    </React.StrictMode>
+  </BrowserRouter>
 );
 
 if ("serviceWorker" in navigator) {

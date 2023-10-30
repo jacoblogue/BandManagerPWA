@@ -56,7 +56,7 @@ export default function EventPage() {
           <Col xs={12}>
             <h1 className="text-center">Events</h1>
             <div className="text-center">
-              <Spinner color="primary" /> {/* add Spinner */}
+              <Spinner color="primary" />
             </div>
           </Col>
         </Row>

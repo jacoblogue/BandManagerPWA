@@ -2,6 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Spinner } from "reactstrap";
+import PageLoader from "../common/PageLoader";
 
 export default function CallbackPage() {
   const { error, isLoading, isAuthenticated } = useAuth0();
@@ -26,10 +27,7 @@ export default function CallbackPage() {
 
   return (
     <Container>
-      <div className="text-center">
-        <h1>Loading...</h1>
-        <Spinner color="primary" />
-      </div>
+      <PageLoader />
     </Container>
   );
 }

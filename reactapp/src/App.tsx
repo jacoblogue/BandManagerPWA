@@ -14,6 +14,8 @@ import Home from "./components/home/Home";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import CallbackPage from "./components/auth/CallbackPage";
 import Auth0ProviderWithNavigate from "./components/auth/Auth0ProviderWithNavigate";
+import PageLoader from "./components/common/PageLoader";
+import { Container } from "reactstrap";
 
 const routes: RouteModel[] = [
   {
@@ -36,12 +38,9 @@ const routes: RouteModel[] = [
 
 export default function App() {
   const { replaceEvents, deleteEvent, addEvent } = useEventStore();
-  const { setPreferredColorScheme, preferredColorScheme } = useThemeStore();
-  const { getAccessTokenSilently } = useAuth0();
+  const { setPreferredColorScheme } = useThemeStore();
+  const { getAccessTokenSilently, isLoading } = useAuth0();
   const apiAudience = import.meta.env.VITE_API_AUDIENCE;
-  const domain = import.meta.env.VITE_AUTH0_DOMAIN;
-  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
-  const redirectUri = import.meta.env.VITE_AUTH0_CALLBACK_URL;
 
   /**
    * This `useEffect` hook establishes a SignalR connection to the server and listens for updates to events.
@@ -127,28 +126,28 @@ export default function App() {
     updateColorScheme();
 
     // Listen for changes
-    mediaQuery.addEventListener("change", (e) => updateColorScheme());
+    mediaQuery.addEventListener("change", () => updateColorScheme());
 
     return () => {
-      mediaQuery.removeEventListener("change", (e) => updateColorScheme());
+      mediaQuery.removeEventListener("change", () => updateColorScheme());
     };
   }, [setPreferredColorScheme]);
 
+  if (isLoading) {
+    return (
+      <Container>
+        <PageLoader />
+      </Container>
+    );
+  }
+
   return (
-    <BrowserRouter>
-      <Auth0ProviderWithNavigate>
-        <Routes>
-          <Route element={<Layout routes={routes} />}>
-            {routes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
-              />
-            ))}
-          </Route>
-        </Routes>
-      </Auth0ProviderWithNavigate>
-    </BrowserRouter>
+    <Routes>
+      <Route element={<Layout routes={routes} />}>
+        {routes.map((route) => (
+          <Route key={route.path} path={route.path} element={route.element} />
+        ))}
+      </Route>
+    </Routes>
   );
 }
