@@ -1,9 +1,9 @@
-import React from "react";
+import React, { FunctionComponent } from "react";
 import { Col, Container, Row } from "reactstrap";
 import { useAuth0 } from "@auth0/auth0-react";
 import LoginButton from "../auth/LoginButton";
 
-export default function Home() {
+export const Home: React.FC = () => {
   const { isAuthenticated } = useAuth0();
   return (
     <Container
@@ -28,4 +28,4 @@ export default function Home() {
       </Row>
     </Container>
   );
-}
+};

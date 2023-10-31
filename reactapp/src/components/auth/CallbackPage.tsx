@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Spinner } from "reactstrap";
 import PageLoader from "../common/PageLoader";
 
-export default function CallbackPage() {
+export const CallbackPage: React.FC = () => {
   const { error, isLoading, isAuthenticated } = useAuth0();
   const navigate = useNavigate();
 
@@ -30,4 +30,4 @@ export default function CallbackPage() {
       <PageLoader />
     </Container>
   );
-}
+};

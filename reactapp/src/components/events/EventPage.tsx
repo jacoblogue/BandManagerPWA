@@ -6,7 +6,7 @@ import axios from "axios";
 import { useEventStore } from "@/state/eventStore";
 import { useAuth0 } from "@auth0/auth0-react";
 
-export default function EventPage() {
+export const EventPage: React.FC = () => {
   const apiAudience = import.meta.env.VITE_API_AUDIENCE;
   const { getAccessTokenSilently } = useAuth0();
   const [loading, setLoading] = useState(true);
@@ -86,4 +86,4 @@ export default function EventPage() {
       </Row>
     </Container>
   );
-}
+};

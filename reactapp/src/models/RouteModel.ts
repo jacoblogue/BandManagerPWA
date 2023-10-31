@@ -1,8 +1,8 @@
-import React from "react";
+import React, { ComponentType } from "react";
 
 export default interface RouteModel {
   path: string;
   name: string;
-  element: React.JSX.Element;
+  element: ComponentType<any>;
   exact?: boolean;
 }

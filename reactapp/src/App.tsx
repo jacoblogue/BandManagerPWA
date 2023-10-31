@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Layout from "./components/common/Layout";
 import RouteModel from "./models/RouteModel";
-import EventPage from "./components/events/EventPage";
+import { EventPage } from "./components/events/EventPage";
 import * as signalR from "@microsoft/signalr";
 import { useEventStore } from "./state/eventStore";
 import { useThemeStore } from "./state/themeStore";
@@ -10,31 +10,12 @@ import axios from "axios";
 import ExistingEventModel from "./models/ExistingEventModel";
 import SignalRMessage from "./models/SignalRMessage";
 import { MessageTypeEnum } from "./models/MessageTypeEnum";
-import Home from "./components/home/Home";
-import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
-import CallbackPage from "./components/auth/CallbackPage";
-import Auth0ProviderWithNavigate from "./components/auth/Auth0ProviderWithNavigate";
+import { Home } from "./components/home/Home";
+import { useAuth0 } from "@auth0/auth0-react";
+import { CallbackPage } from "./components/auth/CallbackPage";
 import PageLoader from "./components/common/PageLoader";
 import { Container } from "reactstrap";
-
-const routes: RouteModel[] = [
-  {
-    path: "/",
-    element: <Home />,
-    exact: true,
-    name: "Home",
-  },
-  {
-    path: "/events",
-    element: <EventPage />,
-    name: "Events",
-  },
-  {
-    path: "/callback",
-    element: <CallbackPage />,
-    name: "Callback",
-  },
-];
+import AuthenticationGuard from "./components/auth/AuthenticationGuard";
 
 export default function App() {
   const { replaceEvents, deleteEvent, addEvent } = useEventStore();
@@ -133,6 +114,25 @@ export default function App() {
     };
   }, [setPreferredColorScheme]);
 
+  const routes: RouteModel[] = [
+    {
+      path: "/",
+      element: Home,
+      exact: true,
+      name: "Home",
+    },
+    {
+      path: "/events",
+      element: EventPage,
+      name: "Events",
+    },
+    {
+      path: "/callback",
+      element: CallbackPage,
+      name: "Callback",
+    },
+  ];
+
   if (isLoading) {
     return (
       <Container>
@@ -145,7 +145,17 @@ export default function App() {
     <Routes>
       <Route element={<Layout routes={routes} />}>
         {routes.map((route) => (
-          <Route key={route.path} path={route.path} element={route.element} />
+          <Route
+            key={route.path}
+            path={route.path}
+            element={
+              route.name === "Home" ? (
+                React.createElement(route.element)
+              ) : (
+                <AuthenticationGuard component={route.element} />
+              )
+            }
+          />
         ))}
       </Route>
     </Routes>
