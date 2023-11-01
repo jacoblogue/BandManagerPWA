@@ -16,6 +16,7 @@ import { CallbackPage } from "./components/auth/CallbackPage";
 import PageLoader from "./components/common/PageLoader";
 import { Container } from "reactstrap";
 import AuthenticationGuard from "./components/auth/AuthenticationGuard";
+import ProfilePage from "./components/profile/ProfilePage";
 
 export default function App() {
   const { replaceEvents, deleteEvent, addEvent } = useEventStore();
@@ -131,6 +132,11 @@ export default function App() {
       element: CallbackPage,
       name: "Callback",
     },
+    {
+      path: "/profile",
+      element: ProfilePage,
+      name: "Profile",
+    },
   ];
 
   if (isLoading) {
@@ -143,18 +149,12 @@ export default function App() {
 
   return (
     <Routes>
-      <Route element={<Layout routes={routes} />}>
+      <Route element={<Layout />}>
         {routes.map((route) => (
           <Route
             key={route.path}
             path={route.path}
-            element={
-              route.name === "Home" ? (
-                React.createElement(route.element)
-              ) : (
-                <AuthenticationGuard component={route.element} />
-              )
-            }
+            element={<AuthenticationGuard component={route.element} />}
           />
         ))}
       </Route>

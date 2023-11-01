@@ -3,7 +3,7 @@ import { withAuthenticationRequired } from "@auth0/auth0-react";
 import PageLoader from "../common/PageLoader";
 
 interface AuthenticationGuardProps {
-  component: ComponentType<any>; // Replace 'any' with the actual props if known
+  component: ComponentType<any>;
 }
 
 export default function AuthenticationGuard({
@@ -13,6 +13,7 @@ export default function AuthenticationGuard({
     () =>
       withAuthenticationRequired(component, {
         onRedirecting: () => <PageLoader />,
+        returnTo: "/events",
       }),
     [component]
   );
