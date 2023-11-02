@@ -3,6 +3,7 @@ import { Container, Row, Col } from "reactstrap";
 import styles from "./ProfilePage.module.css";
 import { useAuth0 } from "@auth0/auth0-react";
 import LogoutButton from "../auth/LogoutButton";
+import ThemeToggler from "../common/ThemeToggler";
 
 interface User {
   name: string;
@@ -39,12 +40,22 @@ const ProfilePage: React.FC = () => {
       </Row>
       <Row>
         <Col>
-          <h3>Email</h3>
+          <h2>Email</h2>
           <p>{user.email}</p>
         </Col>
       </Row>
       <Row>
-        <LogoutButton />
+        <Col>
+          <h2>Set Theme</h2>
+          <div className="mx-5">
+            <ThemeToggler />
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <LogoutButton />
+        </Col>
       </Row>
     </Container>
   );

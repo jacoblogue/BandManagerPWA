@@ -17,12 +17,7 @@ const TopNavbar = () => {
 
   return (
     <Navbar color={preferredColorScheme} light expand="lg">
-      <Nav className="me-auto" navbar>
-        <NavItem>
-          <ThemeToggler />
-        </NavItem>
-      </Nav>
-      <NavLink to={"/profile"}>
+      <NavLink to={"/profile"} className="ms-auto">
         <span>
           {user && user.picture ? (
             <img
