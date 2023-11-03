@@ -1,19 +1,9 @@
 import React from "react";
 import { Container, Row, Col } from "reactstrap";
-import styles from "./ProfilePage.module.css";
 import { useAuth0 } from "@auth0/auth0-react";
-import LogoutButton from "../auth/LogoutButton";
 import ThemeToggler from "../common/ThemeToggler";
+import LogoutButtonWithConfirmation from "../auth/LogoutButtonWithConfirmation";
 
-interface User {
-  name: string;
-  email: string;
-  picture: string;
-}
-
-/**
- * Renders a user's profile information in a visually pleasing manner.
- */
 const ProfilePage: React.FC = () => {
   const { user } = useAuth0();
 
@@ -54,7 +44,7 @@ const ProfilePage: React.FC = () => {
       </Row>
       <Row>
         <Col>
-          <LogoutButton />
+          <LogoutButtonWithConfirmation />
         </Col>
       </Row>
     </Container>
