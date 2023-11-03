@@ -1,12 +1,12 @@
 import { useThemeStore } from "@/state/themeStore";
-import React from "react";
+import React, { useState } from "react";
 import {
   BiPlusCircle,
   BiCalendar,
   BiCalendarEvent,
   BiCalendarPlus,
 } from "react-icons/bi";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Navbar, Nav, NavItem, Button } from "reactstrap";
 import styles from "./BottomNavbar.module.css";
 
@@ -16,8 +16,7 @@ interface Props {
 
 export default function BottomNavbar({ setIsModalOpen }: Props) {
   const { preferredColorScheme } = useThemeStore();
-  const currentLocation = window.location.pathname;
-
+  const location = useLocation();
   return (
     <Navbar
       className="border-top p-0"
@@ -34,21 +33,22 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
             </span>
           </NavLink>
         </NavItem>
-        <NavItem className="">
-          <Button
-            className={`${styles.newEventButton} text-${
-              preferredColorScheme === "dark" ? "light" : "dark"
-            }`}
-            color={"link"}
-            onClick={() => setIsModalOpen(true)}
-          >
-            <span className="d-flex flex-column justify-content-center align-items-center">
-              <BiCalendarPlus size={"1.6rem"} />
-              New Event
-            </span>
-          </Button>
-          {/* icon for event */}
-        </NavItem>
+        {location.pathname === "/events" && (
+          <NavItem className="">
+            <Button
+              className={`${styles.newEventButton} text-${
+                preferredColorScheme === "dark" ? "light" : "dark"
+              }`}
+              color={"link"}
+              onClick={() => setIsModalOpen(true)}
+            >
+              <span className="d-flex flex-column justify-content-center align-items-center">
+                <BiCalendarPlus size={"1.6rem"} />
+                New Event
+              </span>
+            </Button>
+          </NavItem>
+        )}
         <NavItem>
           <NavLink
             to="/calendar"
