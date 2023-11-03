@@ -7,6 +7,9 @@ namespace BandManagerPWA.DataAccess.Models
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
         public DbSet<Event> Events { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<User> Users { get; set; }
+
 
         // override save to set created and updated dates
         public override int SaveChanges()
