@@ -17,6 +17,7 @@ import PageLoader from "./components/common/PageLoader";
 import { Container } from "reactstrap";
 import AuthenticationGuard from "./components/auth/AuthenticationGuard";
 import ProfilePage from "./components/profile/ProfilePage";
+import AdminPage from "./components/admin/AdminPage";
 
 export default function App() {
   const { replaceEvents, deleteEvent, addEvent } = useEventStore();
@@ -136,6 +137,11 @@ export default function App() {
       path: "/profile",
       element: ProfilePage,
       name: "Profile",
+    },
+    {
+      path: "/admin",
+      element: AdminPage,
+      name: "Admin",
     },
   ];
 

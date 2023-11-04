@@ -1,4 +1,6 @@
+import { useThemeStore } from "@/state/themeStore";
 import React from "react";
+import { NavLink } from "react-router-dom";
 import {
   ListGroup,
   ListGroupItem,
@@ -13,6 +15,9 @@ interface Props {
 }
 
 const Sidebar = ({ collapsed, setCollapsed }: Props) => {
+  const { preferredColorScheme } = useThemeStore();
+  const linkColor = preferredColorScheme === "dark" ? "light" : "dark";
+
   return (
     <Offcanvas
       style={{ maxWidth: "40%" }}
@@ -22,7 +27,15 @@ const Sidebar = ({ collapsed, setCollapsed }: Props) => {
       <OffcanvasHeader>Navigate</OffcanvasHeader>
       <OffcanvasBody>
         <ListGroup flush>
-          <ListGroupItem>Item 1</ListGroupItem>
+          <ListGroupItem>
+            <NavLink
+              onClick={() => setCollapsed(!collapsed)}
+              className={`text-${linkColor}`}
+              to={"/admin"}
+            >
+              Admin
+            </NavLink>
+          </ListGroupItem>
         </ListGroup>
       </OffcanvasBody>
     </Offcanvas>
