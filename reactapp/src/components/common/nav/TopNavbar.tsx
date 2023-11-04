@@ -1,10 +1,17 @@
 import React from "react";
 import { Collapse, Nav, NavItem, Navbar, NavbarToggler } from "reactstrap";
 import { useThemeStore } from "@/state/themeStore";
-import { BsPersonCircle } from "react-icons/bs";
+import {
+  BsArrowBarRight,
+  BsArrowRight,
+  BsMenuApp,
+  BsMenuButton,
+  BsPersonCircle,
+} from "react-icons/bs";
 import { NavLink } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import Sidebar from "./Sidebar";
+import styles from "./TopNavbar.module.scss";
 
 const TopNavbar = () => {
   const { user } = useAuth0();
@@ -17,7 +24,9 @@ const TopNavbar = () => {
   return (
     <React.Fragment>
       <Navbar color={preferredColorScheme} expand="lg">
-        <NavbarToggler onClick={toggleSidebar} />
+        <NavbarToggler onClick={toggleSidebar}>
+          <BsArrowBarRight />
+        </NavbarToggler>
         <NavLink to={"/profile"} className="ms-auto">
           <span>
             {user && user.picture ? (
