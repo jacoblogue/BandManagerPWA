@@ -21,6 +21,8 @@ export default function Auth0ProviderWithNavigate({ children }) {
       domain={domain}
       clientId={clientId}
       authorizationParams={{
+        // when using ngrok, change redirect uri to ngrok url
+        // redirect_uri: "https://7f91-72-90-85-135.ngrok-free.app",
         redirect_uri: redirectUri,
       }}
       onRedirectCallback={onRedirectCallback}
