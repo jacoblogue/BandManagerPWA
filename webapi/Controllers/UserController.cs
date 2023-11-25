@@ -24,17 +24,11 @@ namespace webapi.Controllers
         [HttpPost]
         public async Task<IActionResult> UpsertUser([FromBody] UserDTO incomingUser)
         {
-            // idempotent - if user exists, return 200
-            // if user doesn't exist, create user and return 201
-            // if user exists but is different, update user and return 200
-
             try
             {
                 var existingUser = _context.Users.FirstOrDefault(u => u.Email == incomingUser.Email);
                 if (existingUser != null)
                 {
-                    // Check if user is different
-                    // if user is different, update user
                     return Ok();
                 }
                 else
