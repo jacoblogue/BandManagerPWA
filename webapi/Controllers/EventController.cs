@@ -154,7 +154,7 @@ namespace webapi.Controllers
 
             await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
 
-            Log.Information("Event created: {Event}", newEvent);
+            Log.Information("Event created: {@Event}", newEvent);
             return Ok();
         }
 
