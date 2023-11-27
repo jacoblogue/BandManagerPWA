@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using webapi.Models;
 using webapi.utilities;
 
@@ -152,6 +153,8 @@ namespace webapi.Controllers
             };
 
             await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
+
+            Log.Information("Event created: {Event}", newEvent);
             return Ok();
         }
 
