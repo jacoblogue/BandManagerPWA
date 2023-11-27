@@ -1,5 +1,6 @@
 ﻿using BandManagerPWA.DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using webapi.Models;
 
 namespace webapi.Controllers
@@ -40,12 +41,15 @@ namespace webapi.Controllers
                     };
                     await _context.Users.AddAsync(newUser);
                     await _context.SaveChangesAsync();
+
+                    Log.Information("New user created: {@newUser}", newUser);
                     return CreatedAtAction(nameof(GetUsers), newUser);
                 }
             }
             catch (Exception ex)
             {
                 // TODO Add logging etc
+                Log.Error(ex, "Error upserting user");
                 return StatusCode(500, "An error occurred while processing your request");
             }
         }

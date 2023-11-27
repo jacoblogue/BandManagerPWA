@@ -177,6 +177,8 @@ namespace webapi.Controllers
                 EventId = id
             };
             await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
+
+            Log.Information("Event deleted: {@Event}", eventToDelete);
             return Ok();
         }
     }
