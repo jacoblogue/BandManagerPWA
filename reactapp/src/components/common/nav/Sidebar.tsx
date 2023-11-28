@@ -39,6 +39,15 @@ const Sidebar = ({ collapsed, setCollapsed }: Props) => {
               Admin
             </NavLink>
           </ListGroupItem>
+          <ListGroupItem>
+            <NavLink
+              onClick={() => setCollapsed(!collapsed)}
+              to={"/groups"}
+              className={`text-${linkColor}`}
+            >
+              Groups
+            </NavLink>
+          </ListGroupItem>
         </ListGroup>
       </OffcanvasBody>
     </Offcanvas>

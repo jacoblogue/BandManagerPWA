@@ -18,6 +18,7 @@ import { Container } from "reactstrap";
 import AuthenticationGuard from "./components/auth/AuthenticationGuard";
 import ProfilePage from "./components/profile/ProfilePage";
 import AdminPage from "./components/admin/AdminPage";
+import Groups from "./components/groups/GroupsPage";
 
 export default function App() {
   const { replaceEvents, deleteEvent, addEvent } = useEventStore();
@@ -142,6 +143,11 @@ export default function App() {
       path: "/admin",
       element: AdminPage,
       name: "Admin",
+    },
+    {
+      path: "/groups",
+      element: Groups,
+      name: "Groups",
     },
   ];
 
