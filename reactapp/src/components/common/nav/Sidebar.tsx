@@ -1,5 +1,6 @@
 import { useThemeStore } from "@/state/themeStore";
 import React from "react";
+import { BsArrowBarLeft } from "react-icons/bs";
 import { NavLink } from "react-router-dom";
 import {
   ListGroup,
@@ -24,7 +25,9 @@ const Sidebar = ({ collapsed, setCollapsed }: Props) => {
       isOpen={!collapsed}
       toggle={() => setCollapsed(!collapsed)}
     >
-      <OffcanvasHeader>Navigate</OffcanvasHeader>
+      <OffcanvasHeader toggle={() => setCollapsed(!collapsed)}>
+        Navigate
+      </OffcanvasHeader>
       <OffcanvasBody>
         <ListGroup flush>
           <ListGroupItem>
