@@ -82,12 +82,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("read:events", policy => policy.Requirements.Add(new HasScopeRequirement("read:events", $"https://dev-f0jsmjla2lggonlk.us.auth0.com/")));
-    options.AddPolicy("create:events", policy => policy.Requirements.Add(new HasScopeRequirement("create:events", $"https://dev-f0jsmjla2lggonlk.us.auth0.com/")));
-    options.AddPolicy("delete:events", policy => policy.Requirements.Add(new HasScopeRequirement("delete:events", $"https://dev-f0jsmjla2lggonlk.us.auth0.com/")));
-});
+var issuer = "https://dev-f0jsmjla2lggonlk.us.auth0.com/";
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("read:events", policy => policy.Requirements.Add(new HasScopeRequirement("read:events", issuer)))
+    .AddPolicy("create:events", policy => policy.Requirements.Add(new HasScopeRequirement("create:events", issuer)))
+    .AddPolicy("delete:events", policy => policy.Requirements.Add(new HasScopeRequirement("delete:events", issuer)))
+    .AddPolicy("update:events", policy => policy.Requirements.Add(new HasScopeRequirement("update:events", issuer)))
+    .AddPolicy("read:groups", policy => policy.Requirements.Add(new HasScopeRequirement("read:groups", issuer)))
+    .AddPolicy("create:groups", policy => policy.Requirements.Add(new HasScopeRequirement("create:groups", issuer)))
+    .AddPolicy("delete:groups", policy => policy.Requirements.Add(new HasScopeRequirement("delete:groups", issuer)))
+    .AddPolicy("update:groups", policy => policy.Requirements.Add(new HasScopeRequirement("update:groups", issuer)));
 
 var app = builder.Build();
 
