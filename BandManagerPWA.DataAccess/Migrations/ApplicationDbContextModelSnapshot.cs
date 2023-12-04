@@ -51,7 +51,7 @@ namespace BandManagerPWA.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
                 });
 
             modelBuilder.Entity("BandManagerPWA.DataAccess.Models.Group", b =>
@@ -75,7 +75,7 @@ namespace BandManagerPWA.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups");
+                    b.ToTable("Groups", (string)null);
                 });
 
             modelBuilder.Entity("BandManagerPWA.DataAccess.Models.User", b =>
@@ -101,7 +101,7 @@ namespace BandManagerPWA.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("GroupUser", b =>
@@ -116,7 +116,7 @@ namespace BandManagerPWA.DataAccess.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("GroupUser");
+                    b.ToTable("GroupUser", (string)null);
                 });
 
             modelBuilder.Entity("GroupUser", b =>
