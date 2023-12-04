@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using webapi.Controllers;
 using webapi.utilities;
 
-namespace BandManagerPWA.Test
+namespace BandManagerPWA.Test.Controllers
 {
     [TestClass]
-    public class EventControllerTest
+    public class EventControllerTests
     {
         private ApplicationDbContext _context;
         private EventController _controller;
