@@ -12,6 +12,7 @@ namespace webapi.Controllers
     public class GroupController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly string _emailClaimType = "https://bandmanager.com/email";
 
         public GroupController(ApplicationDbContext context)
         {
@@ -23,8 +24,26 @@ namespace webapi.Controllers
         {
             Log.Information("GetGroups endpoint hit");
 
-            // TODO: If user is admin, get all groups. Otherwise, get only groups that user is a member of.
-            var groups = _context.Groups.ToList();
+            List<Group> groups = [];
+
+            bool readAll = User.HasClaim("permissions", "read:all");
+
+            if (readAll)
+            {
+                groups = _context.Groups.ToList();
+            }
+            else
+            {
+                if (!User.HasClaim(c => c.Type == _emailClaimType))
+                {
+                    Log.Warning("User email claim not found");
+                    return BadRequest("User email claim not found");
+                }
+
+                // get user's email and only get their groups
+                var userEmail = User.Claims.FirstOrDefault(c => c.Type == _emailClaimType)?.Value;
+                groups = _context.Groups.Where(g => g.Users.Any(u => u.Email == userEmail)).ToList();
+            }
 
             // Return an empty list if no groups are found
             return Ok(groups ?? []);
@@ -87,7 +106,7 @@ namespace webapi.Controllers
         public async Task<IActionResult> UpdateGroupInfo(Guid id, GroupDTO updatedGroup)
         {
             Log.Information("UpdateGroupInfo endpoint hit");
-            
+
             var group = _context.Groups.FirstOrDefault(g => g.Id == id);
 
             if (group == null)

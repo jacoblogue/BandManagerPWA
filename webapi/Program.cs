@@ -93,6 +93,7 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("delete:groups", policy => policy.Requirements.Add(new HasScopeRequirement("delete:groups", issuer)))
     .AddPolicy("update:groups", policy => policy.Requirements.Add(new HasScopeRequirement("update:groups", issuer)));
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

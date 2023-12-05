@@ -15,6 +15,7 @@ namespace webapi.Controllers
     {
         private ApplicationDbContext _context;
         private readonly IHubContext<EventHub> _hubContext;
+        private readonly string _emailClaimType = "https://bandmanager.com/email";
         public EventController(ApplicationDbContext context, IHubContext<EventHub> hubContext)
         {
             _context = context;
@@ -24,7 +25,7 @@ namespace webapi.Controllers
         [HttpGet, Authorize(Policy = "read:events")]
         public async Task<IActionResult> GetEvents()
         {
-
+            var claims = User.Claims;
             var testEvents = new List<Event>
             {
                 new Event
