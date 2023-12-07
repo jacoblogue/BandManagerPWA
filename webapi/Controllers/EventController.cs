@@ -25,8 +25,9 @@ namespace webapi.Controllers
         [HttpGet, Authorize(Policy = "read:events")]
         public async Task<IActionResult> GetEvents()
         {
-            var claims = User.Claims;
-            var testEvents = new List<Event>
+            try
+            {
+                var testEvents = new List<Event>
             {
                 new Event
                 {
@@ -125,10 +126,45 @@ namespace webapi.Controllers
                     Date = DateTime.Now.AddDays(100)
                 },
             };
+                Log.Information("GetEvents endpoint hit");
 
-            var events = await _context.Events.ToListAsync();
+                bool readAll = User.HasClaim("permissions", "read:all");
 
-            return Ok(events);
+                List<Event> events = [];
+
+                if (readAll)
+                {
+                    events = await _context.Events.ToListAsync();
+                    return Ok(events);
+                }
+                else
+                {
+                    if (!User.HasClaim(c => c.Type == _emailClaimType))
+                    {
+                        Log.Warning("User email claim not found");
+                        return BadRequest("User email claim not found");
+                    }
+
+                    // get user's email and only get their events
+                    var userEmail = User.Claims.FirstOrDefault(c => c.Type == _emailClaimType)?.Value;
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+
+                    if (user == null)
+                    {
+                        Log.Warning("User not found");
+                        return BadRequest("User not found");
+                    }
+
+                    // TODO: Pagination?
+                }
+
+                return Ok(events);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                return Problem(ex.Message);
+            }
         }
 
         [HttpPost, Authorize(Policy = "create:events")]

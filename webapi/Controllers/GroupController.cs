@@ -30,7 +30,7 @@ namespace webapi.Controllers
 
             if (readAll)
             {
-                groups = _context.Groups.ToList();
+                groups = await _context.Groups.ToListAsync();
             }
             else
             {
@@ -42,7 +42,7 @@ namespace webapi.Controllers
 
                 // get user's email and only get their groups
                 var userEmail = User.Claims.FirstOrDefault(c => c.Type == _emailClaimType)?.Value;
-                groups = _context.Groups.Where(g => g.Users.Any(u => u.Email == userEmail)).ToList();
+                groups = await _context.Groups.Where(g => g.Users.Any(u => u.Email == userEmail)).ToListAsync();
             }
 
             // Return an empty list if no groups are found
