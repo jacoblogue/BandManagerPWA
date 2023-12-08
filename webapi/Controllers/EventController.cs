@@ -128,6 +128,12 @@ namespace webapi.Controllers
             };
                 Log.Information("GetEvents endpoint hit");
 
+                if (User is null)
+                {
+                    Log.Warning("User is null");
+                    return BadRequest();
+                }
+
                 bool readAll = User.HasClaim("permissions", "read:all");
 
                 List<Event> events = [];
@@ -193,7 +199,7 @@ namespace webapi.Controllers
             await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
 
             Log.Information("Event created: {@Event}", newEvent);
-            return Ok();
+            return Ok(newEvent);
         }
 
         [HttpDelete("{id}"), Authorize(Policy = "delete:events")]

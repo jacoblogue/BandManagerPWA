@@ -28,8 +28,8 @@ namespace webapi.Controllers
 
             if (User is null)
             {
-                Log.Warning("User not found");
-                return BadRequest("User not found");
+                Log.Warning("User is null");
+                return BadRequest();
             }
 
             bool readAll = User.HasClaim("permissions", "read:all");

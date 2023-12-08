@@ -1,8 +1,12 @@
 using BandManagerPWA.DataAccess.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using webapi.Controllers;
 using webapi.utilities;
+using NSubstitute;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BandManagerPWA.Test.Controllers
 {
@@ -20,7 +24,11 @@ namespace BandManagerPWA.Test.Controllers
                 .UseInMemoryDatabase(databaseName: "BandManagerPWA")
                 .Options;
             _context = new ApplicationDbContext(options);
-            var hubContext = new FakeHubContext<EventHub>();
+            var hubContext = Substitute.For<IHubContext<EventHub>>();
+            var clients = Substitute.For<IHubClients>();
+            var allClients = Substitute.For<IClientProxy>();
+            hubContext.Clients.Returns(clients);
+            clients.All.Returns(allClients);
             _controller = new EventController(_context, hubContext);
         }
 
@@ -65,6 +73,21 @@ namespace BandManagerPWA.Test.Controllers
             };
             await _context.AddAsync(newEvent);
             await _context.SaveChangesAsync();
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new("permissions", "delete:events"),
+                new("https://bandmanager.com/email", "test@test.com")
+            }));
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = user
+                }
+            };
+
             // Act
             var result = await _controller.Delete(newEvent.Id);
             // Assert
@@ -74,7 +97,7 @@ namespace BandManagerPWA.Test.Controllers
         }
 
         [TestMethod]
-        public async Task Get_GetsEvents()
+        public async Task GetEvents_GetsAllEvents()
         {
             // Arrange
             var newEvent = new Event
@@ -87,6 +110,73 @@ namespace BandManagerPWA.Test.Controllers
             };
             await _context.AddAsync(newEvent);
             await _context.SaveChangesAsync();
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new("permissions", "read:all"),
+                new("https://bandmanager.com/email", "test@test.com")
+            }));
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = user
+                }
+            };
+
+            // Act
+            var result = await _controller.GetEvents();
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            var okResult = result as OkObjectResult;
+            Assert.IsInstanceOfType(okResult.Value, typeof(List<Event>));
+            var events = okResult.Value as List<Event>;
+            Assert.AreEqual(1, events.Count);
+            Assert.AreEqual(newEvent.Id, events[0].Id);
+            Assert.AreEqual(newEvent.Title, events[0].Title);
+            Assert.AreEqual(newEvent.Date, events[0].Date);
+            Assert.AreEqual(newEvent.Location, events[0].Location);
+            Assert.AreEqual(newEvent.Description, events[0].Description);
+        }
+
+        [TestMethod]
+        public async Task GetEvents_GetsUserEvents()
+        {
+            // Arrange
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@test.com"
+            };
+
+            var newEvent = new Event
+            {
+                Id = Guid.NewGuid(),
+                Title = "Test Event",
+                Date = DateTime.Now,
+                Location = "Test Location",
+                Description = "Test Description",
+                Users = [user]
+            };
+            await _context.AddAsync(newEvent);
+            await _context.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            var httpContextUser = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new("permissions", "read:events"),
+                new("https://bandmanager.com/email", "test@test.com")
+            }));
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = httpContextUser
+                }
+            };
+
             // Act
             var result = await _controller.GetEvents();
             // Assert
