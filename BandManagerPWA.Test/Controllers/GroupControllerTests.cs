@@ -1,6 +1,8 @@
 ﻿using BandManagerPWA.DataAccess.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using webapi.Controllers;
 using webapi.Models;
 
@@ -24,12 +26,14 @@ namespace BandManagerPWA.Test.Controllers
             _context = new ApplicationDbContext(options);
             _controller = new GroupController(_context);
 
+            // add controllerContext with user claims
+
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
         }
 
         [TestMethod]
-        public async Task GetGroups_GetsGroups()
+        public async Task GetGroups_GetsAllGroups()
         {
             // Arrange
             var newGroup = new Group
@@ -40,6 +44,18 @@ namespace BandManagerPWA.Test.Controllers
             };
             await _context.Groups.AddAsync(newGroup);
             await _context.SaveChangesAsync();
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new("permissions", "read:all"),
+                new("https://bandmanager.com/email", "test@test.com")
+            }));
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user }
+            };
+
 
             // Act
             var result = await _controller.GetGroups();
@@ -53,7 +69,53 @@ namespace BandManagerPWA.Test.Controllers
             Assert.AreEqual(newGroup.Id, groups[0].Id);
             Assert.AreEqual(newGroup.Name, groups[0].Name);
             Assert.AreEqual(newGroup.Description, groups[0].Description);
+        }
 
+        [TestMethod]
+        public async Task GetGroups_GetsGroupsForUser()
+        {
+            // Arrange
+            var newGroup = new Group
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Group",
+                Description = "Test Description",
+                Users = new List<User>
+                {
+                    new User
+                    {
+                        Id = Guid.NewGuid(),
+                        Email = "test@test.com"
+                    }
+                }
+            };
+            await _context.Groups.AddAsync(newGroup);
+            await _context.SaveChangesAsync();
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new("permissions", "read:groups"),
+                new("https://bandmanager.com/email", "test@test.com")
+             }));
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user }
+            };
+
+
+            // Act
+            var result = await _controller.GetGroups();
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            var okResult = result as OkObjectResult;
+            Assert.IsInstanceOfType(okResult.Value, typeof(List<Group>));
+            var groups = okResult.Value as List<Group>;
+            Assert.AreEqual(1, groups.Count);
+            Assert.AreEqual(newGroup.Id, groups[0].Id);
+            Assert.AreEqual(newGroup.Name, groups[0].Name);
+            Assert.AreEqual(newGroup.Description, groups[0].Description);
         }
 
         [TestMethod]

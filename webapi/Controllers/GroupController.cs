@@ -26,6 +26,12 @@ namespace webapi.Controllers
 
             List<Group> groups = [];
 
+            if (User is null)
+            {
+                Log.Warning("User not found");
+                return BadRequest("User not found");
+            }
+
             bool readAll = User.HasClaim("permissions", "read:all");
 
             if (readAll)

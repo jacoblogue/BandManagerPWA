@@ -156,6 +156,7 @@ namespace webapi.Controllers
                     }
 
                     // TODO: Pagination?
+                    events = await _context.Events.Where(e => e.Users.Any(u => u.Id == user.Id)).ToListAsync();
                 }
 
                 return Ok(events);
