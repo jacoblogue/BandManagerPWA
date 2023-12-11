@@ -232,30 +232,75 @@ namespace webapi.Controllers
             try
             {
                 Log.Information("UpdateEvent endpoint was hit.");
-                var eventToUpdate = _context.Events.FirstOrDefault(e => e.Id == updatedEvent.Id);
 
-                if (eventToUpdate == null)
+                bool writeAll = User.HasClaim("permissions", "write:all");
+                if (writeAll)
                 {
-                    Log.Warning("Event not found");
-                    return NotFound();
+                    var eventToUpdate = _context.Events.FirstOrDefault(e => e.Id == updatedEvent.Id);
+
+                    if (eventToUpdate == null)
+                    {
+                        Log.Warning("Event not found");
+                        return NotFound("Event not found");
+                    }
+
+                    eventToUpdate.Title = updatedEvent.Title;
+                    eventToUpdate.Description = updatedEvent.Description;
+                    eventToUpdate.Location = updatedEvent.Location;
+                    eventToUpdate.Date = updatedEvent.Date.ToUniversalTime();
+
+                    await _context.SaveChangesAsync();
+
+                    var message = new EventMessage
+                    {
+                        MessageType = MessageType.EventUpdated,
+                        Event = eventToUpdate
+                    };
+                    await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
+
+                    Log.Information("Event updated: {@Event}", eventToUpdate);
+                    return Ok(eventToUpdate);
                 }
-
-                eventToUpdate.Title = updatedEvent.Title;
-                eventToUpdate.Description = updatedEvent.Description;
-                eventToUpdate.Location = updatedEvent.Location;
-                eventToUpdate.Date = updatedEvent.Date.ToUniversalTime();
-
-                await _context.SaveChangesAsync();
-
-                var message = new EventMessage
+                else
                 {
-                    MessageType = MessageType.EventUpdated,
-                    Event = eventToUpdate
-                };
-                await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
+                    if (!User.HasClaim(c => c.Type == _emailClaimType))
+                    {
+                        Log.Warning("User email claim not found");
+                        return BadRequest("User email claim not found");
+                    }
 
-                Log.Information("Event updated: {@Event}", eventToUpdate);
-                return Ok(eventToUpdate);
+                    // get user's email and only get their events
+                    var userEmail = User.Claims.FirstOrDefault(c => c.Type == _emailClaimType)?.Value;
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+
+                    if (user == null)
+                    {
+                        Log.Warning("User not found");
+                        return BadRequest("User not found");
+                    }
+
+                    var eventToUpdate = await _context.Events.Include(e => e.Users).FirstOrDefaultAsync(e => e.Id == updatedEvent.Id);
+
+                    if (eventToUpdate == null)
+                    {
+                        Log.Warning("Event not found");
+                        return NotFound("Event not found");
+                    }
+
+                    if (!eventToUpdate.Users.Any(u => u.Id == user.Id))
+                    {
+                        Log.Warning("User does not have permission to update this event");
+                        return BadRequest("User does not have permission to update this event");
+                    }
+
+                    eventToUpdate.Title = updatedEvent.Title;
+                    eventToUpdate.Description = updatedEvent.Description;
+                    eventToUpdate.Location = updatedEvent.Location;
+                    eventToUpdate.Date = updatedEvent.Date.ToUniversalTime();
+
+                    await _context.SaveChangesAsync();
+                    return Ok(eventToUpdate);
+                }
             }
             catch (Exception ex)
             {

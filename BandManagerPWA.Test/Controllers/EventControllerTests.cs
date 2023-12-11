@@ -193,7 +193,7 @@ namespace BandManagerPWA.Test.Controllers
         }
 
         [TestMethod]
-        public async Task UpdateEvent_UpdatesEvent()
+        public async Task UpdateEvent_WriteAll_UpdatesEvent()
         {
             // Arrange
             var newEvent = new Event
@@ -209,7 +209,7 @@ namespace BandManagerPWA.Test.Controllers
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
-                new("permissions", "update:events"),
+                new("permissions", "write:all"),
                 new("https://bandmanager.com/email", "")
             }));
 
@@ -242,6 +242,70 @@ namespace BandManagerPWA.Test.Controllers
             Assert.AreEqual(updatedEvent.Date, dbEvent.Date);
             Assert.AreEqual(updatedEvent.Location, dbEvent.Location);
             Assert.AreEqual(updatedEvent.Description, dbEvent.Description);
+        }
+
+        [TestMethod]
+        public async Task UpdateEvent_UpdatesEventWithUser()
+        {
+            // Arrange
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@test.com"
+            };
+
+            var newEvent = new Event
+            {
+                Id = Guid.NewGuid(),
+                Title = "Test Event",
+                Date = DateTime.Now,
+                Location = "Test Location",
+                Description = "Test Description",
+                Users = [user]
+            };
+            await _context.AddAsync(newEvent);
+            await _context.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            var httpContextUser = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new("permissions", "update:events"),
+                new("https://bandmanager.com/email", "test@test.com")
+            }));
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = httpContextUser
+                }
+            };
+
+            var updatedEvent = new webapi.Models.EventDTO
+            {
+                Id = newEvent.Id,
+                Title = "Updated Test Event",
+                Date = DateTime.Now.AddDays(1),
+                Location = "Updated Test Location",
+                Description = "Updated Test Description"
+            };
+
+            // Act
+            var result = await _controller.UpdateEvent(updatedEvent);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            var okResult = result as OkObjectResult;
+            Assert.IsInstanceOfType(okResult.Value, typeof(Event));
+            var dbEvent = okResult.Value as Event;
+            Assert.AreEqual(updatedEvent.Id, dbEvent.Id);
+            Assert.AreEqual(updatedEvent.Title, dbEvent.Title);
+            Assert.AreEqual(updatedEvent.Date, dbEvent.Date);
+            Assert.AreEqual(updatedEvent.Location, dbEvent.Location);
+            Assert.AreEqual(updatedEvent.Description, dbEvent.Description);
+            Assert.AreEqual(1, dbEvent.Users.Count);
+            Assert.AreEqual(user.Id, dbEvent.Users[0].Id);
+            Assert.AreEqual(user.Email, dbEvent.Users[0].Email);
         }
     }
 }
