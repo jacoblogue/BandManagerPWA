@@ -225,5 +225,43 @@ namespace webapi.Controllers
             Log.Information("Event deleted: {@Event}", eventToDelete);
             return Ok();
         }
+
+        [HttpPut, Authorize(Policy = "update:events")]
+        public async Task<IActionResult> UpdateEvent(EventDTO updatedEvent)
+        {
+            try
+            {
+                Log.Information("UpdateEvent endpoint was hit.");
+                var eventToUpdate = _context.Events.FirstOrDefault(e => e.Id == updatedEvent.Id);
+
+                if (eventToUpdate == null)
+                {
+                    Log.Warning("Event not found");
+                    return NotFound();
+                }
+
+                eventToUpdate.Title = updatedEvent.Title;
+                eventToUpdate.Description = updatedEvent.Description;
+                eventToUpdate.Location = updatedEvent.Location;
+                eventToUpdate.Date = updatedEvent.Date.ToUniversalTime();
+
+                await _context.SaveChangesAsync();
+
+                var message = new EventMessage
+                {
+                    MessageType = MessageType.EventUpdated,
+                    Event = eventToUpdate
+                };
+                await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
+
+                Log.Information("Event updated: {@Event}", eventToUpdate);
+                return Ok(eventToUpdate);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                return Problem(ex.Message);
+            }
+        }
     }
 }

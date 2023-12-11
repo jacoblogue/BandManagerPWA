@@ -4,5 +4,6 @@
     {
         public const string EventAdded = "EventAdded";
         public const string EventDeleted = "EventDeleted";
+        public const string EventUpdated = "EventUpdated";
     }
 }

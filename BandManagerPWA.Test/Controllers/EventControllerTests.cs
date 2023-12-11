@@ -191,5 +191,57 @@ namespace BandManagerPWA.Test.Controllers
             Assert.AreEqual(newEvent.Location, events[0].Location);
             Assert.AreEqual(newEvent.Description, events[0].Description);
         }
+
+        [TestMethod]
+        public async Task UpdateEvent_UpdatesEvent()
+        {
+            // Arrange
+            var newEvent = new Event
+            {
+                Id = Guid.NewGuid(),
+                Title = "Test Event",
+                Date = DateTime.Now,
+                Location = "Test Location",
+                Description = "Test Description"
+            };
+            await _context.AddAsync(newEvent);
+            await _context.SaveChangesAsync();
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new("permissions", "update:events"),
+                new("https://bandmanager.com/email", "")
+            }));
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = user
+                }
+            };
+
+            var updatedEvent = new webapi.Models.EventDTO
+            {
+                Id = newEvent.Id,
+                Title = "Updated Test Event",
+                Date = DateTime.Now.AddDays(1),
+                Location = "Updated Test Location",
+                Description = "Updated Test Description"
+            };
+
+            // Act
+            var result = await _controller.UpdateEvent(updatedEvent);
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            var okResult = result as OkObjectResult;
+            Assert.IsInstanceOfType(okResult.Value, typeof(Event));
+            var dbEvent = okResult.Value as Event;
+            Assert.AreEqual(updatedEvent.Id, dbEvent.Id);
+            Assert.AreEqual(updatedEvent.Title, dbEvent.Title);
+            Assert.AreEqual(updatedEvent.Date, dbEvent.Date);
+            Assert.AreEqual(updatedEvent.Location, dbEvent.Location);
+            Assert.AreEqual(updatedEvent.Description, dbEvent.Description);
+        }
     }
 }
