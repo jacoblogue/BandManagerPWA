@@ -7,6 +7,7 @@ using webapi.Controllers;
 using webapi.utilities;
 using NSubstitute;
 using Microsoft.AspNetCore.SignalR;
+using BandManagerPWA.Services.Interfaces;
 
 namespace BandManagerPWA.Test.Controllers
 {
@@ -15,6 +16,8 @@ namespace BandManagerPWA.Test.Controllers
     {
         private ApplicationDbContext _context;
         private EventController _controller;
+        private IEventService _eventService;
+        private IUserService _userService;
 
         [TestInitialize]
         public void Initialize()
@@ -27,9 +30,18 @@ namespace BandManagerPWA.Test.Controllers
             var hubContext = Substitute.For<IHubContext<EventHub>>();
             var clients = Substitute.For<IHubClients>();
             var allClients = Substitute.For<IClientProxy>();
+
             hubContext.Clients.Returns(clients);
             clients.All.Returns(allClients);
-            _controller = new EventController(_context, hubContext);
+
+            _eventService = Substitute.For<IEventService>();
+            _eventService.GetAllEventsAsync().Returns(new List<Event>());
+            _eventService.GetEventsByUserIdAsync(Arg.Any<Guid>()).Returns(new List<Event>());
+
+            _userService = Substitute.For<IUserService>();
+            _userService.GetUserByEmailAsync(Arg.Any<string>()).Returns(new User());
+
+            _controller = new EventController(hubContext, _userService, _eventService, _context);
         }
 
         [TestMethod]
@@ -100,17 +112,6 @@ namespace BandManagerPWA.Test.Controllers
         public async Task GetEvents_GetsAllEvents()
         {
             // Arrange
-            var newEvent = new Event
-            {
-                Id = Guid.NewGuid(),
-                Title = "Test Event",
-                Date = DateTime.Now,
-                Location = "Test Location",
-                Description = "Test Description"
-            };
-            await _context.AddAsync(newEvent);
-            await _context.SaveChangesAsync();
-
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new("permissions", "read:all"),
@@ -131,13 +132,7 @@ namespace BandManagerPWA.Test.Controllers
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             var okResult = result as OkObjectResult;
             Assert.IsInstanceOfType(okResult.Value, typeof(List<Event>));
-            var events = okResult.Value as List<Event>;
-            Assert.AreEqual(1, events.Count);
-            Assert.AreEqual(newEvent.Id, events[0].Id);
-            Assert.AreEqual(newEvent.Title, events[0].Title);
-            Assert.AreEqual(newEvent.Date, events[0].Date);
-            Assert.AreEqual(newEvent.Location, events[0].Location);
-            Assert.AreEqual(newEvent.Description, events[0].Description);
+            await _eventService.Received().GetAllEventsAsync();
         }
 
         [TestMethod]
@@ -149,19 +144,6 @@ namespace BandManagerPWA.Test.Controllers
                 Id = Guid.NewGuid(),
                 Email = "test@test.com"
             };
-
-            var newEvent = new Event
-            {
-                Id = Guid.NewGuid(),
-                Title = "Test Event",
-                Date = DateTime.Now,
-                Location = "Test Location",
-                Description = "Test Description",
-                Users = [user]
-            };
-            await _context.AddAsync(newEvent);
-            await _context.AddAsync(user);
-            await _context.SaveChangesAsync();
 
             var httpContextUser = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -184,12 +166,7 @@ namespace BandManagerPWA.Test.Controllers
             var okResult = result as OkObjectResult;
             Assert.IsInstanceOfType(okResult.Value, typeof(List<Event>));
             var events = okResult.Value as List<Event>;
-            Assert.AreEqual(1, events.Count);
-            Assert.AreEqual(newEvent.Id, events[0].Id);
-            Assert.AreEqual(newEvent.Title, events[0].Title);
-            Assert.AreEqual(newEvent.Date, events[0].Date);
-            Assert.AreEqual(newEvent.Location, events[0].Location);
-            Assert.AreEqual(newEvent.Description, events[0].Description);
+            await _eventService.Received().GetEventsByUserIdAsync(Arg.Any<Guid>());
         }
 
         [TestMethod]

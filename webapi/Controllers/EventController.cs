@@ -1,4 +1,5 @@
 ﻿using BandManagerPWA.DataAccess.Models;
+using BandManagerPWA.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -13,13 +14,17 @@ namespace webapi.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
-        private ApplicationDbContext _context;
         private readonly IHubContext<EventHub> _hubContext;
         private readonly string _emailClaimType = "https://bandmanager.com/email";
-        public EventController(ApplicationDbContext context, IHubContext<EventHub> hubContext)
+        private IEventService _eventService;
+        private IUserService _userService;
+        private ApplicationDbContext _context;
+        public EventController(IHubContext<EventHub> hubContext, IUserService userService, IEventService eventService, ApplicationDbContext context)
         {
-            _context = context;
             _hubContext = hubContext;
+            _userService = userService;
+            _eventService = eventService;
+            _context = context;
         }
 
         [HttpGet, Authorize(Policy = "read:events")]
@@ -27,105 +32,6 @@ namespace webapi.Controllers
         {
             try
             {
-                var testEvents = new List<Event>
-            {
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 1",
-                    Description = "Test Event 1 Description",
-                    Location = "Test Event 1 Location",
-                    Date = DateTime.Now.AddDays(1)
-                },
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 2",
-                    Description = "Test Event 2 Description",
-                    Location = "Test Event 2 Location",
-                    Date = DateTime.Now.AddDays(2)
-                },
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 3",
-                    Description = "Test Event 3 Description",
-                    Location = "Test Event 3 Location",
-                    Date = DateTime.Now.AddDays(30)
-                },
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 4",
-                    Description = "Test Event 4 Description",
-                    Location = "Test Event 4 Location",
-                    Date = DateTime.Now.AddDays(40)
-                },
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 5",
-                    Description = "Test Event 5 Description",
-                    Location = "Test Event 5 Location",
-                    Date = DateTime.Now.AddDays(50)
-                },
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 6",
-                    Description = "Test Event 6 Description",
-                    Location = "Test Event 6 Location",
-                    Date = DateTime.Now.AddDays(60)
-                },
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 7",
-                    Description = "Test Event 7 Description",
-                    Location = "Test Event 7 Location",
-                    Date = DateTime.Now.AddDays(7)
-                },
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 8",
-                    Description = "Test Event 8 Description",
-                    Location = "Test Event 8 Location",
-                    Date = DateTime.Now.AddDays(8)
-                },
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 9",
-                    Description = "Test Event 9 Description",
-                    Location = "Test Event 9 Location",
-                    Date = DateTime.Now.AddDays(9)
-                },
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 10",
-                    Description = "Test",
-                    Location = "Test Event 10 Location",
-                    Date = DateTime.Now.AddDays(50)
-                },
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 11",
-                    Description = "Test Event 11 Description",
-                    Location = "Test Event 11 Location",
-                    Date = DateTime.Now.AddDays(11)
-                },
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Test Event 12",
-                    Description = "Test Event 12 Description",
-                    Location = "Test Event 12 Location",
-                    Date = DateTime.Now.AddDays(100)
-                },
-            };
                 Log.Information("GetEvents endpoint hit");
 
                 if (User is null)
@@ -140,7 +46,7 @@ namespace webapi.Controllers
 
                 if (readAll)
                 {
-                    events = await _context.Events.ToListAsync();
+                    events = await _eventService.GetAllEventsAsync();
                     return Ok(events);
                 }
                 else
@@ -153,7 +59,7 @@ namespace webapi.Controllers
 
                     // get user's email and only get their events
                     var userEmail = User.Claims.FirstOrDefault(c => c.Type == _emailClaimType)?.Value;
-                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+                    var user = await _userService.GetUserByEmailAsync(userEmail);
 
                     if (user == null)
                     {
@@ -162,7 +68,7 @@ namespace webapi.Controllers
                     }
 
                     // TODO: Pagination?
-                    events = await _context.Events.Where(e => e.Users.Any(u => u.Id == user.Id)).ToListAsync();
+                    events = await _eventService.GetEventsByUserIdAsync(user.Id);
                 }
 
                 return Ok(events);
