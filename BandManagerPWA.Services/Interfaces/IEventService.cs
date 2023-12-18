@@ -5,6 +5,7 @@ namespace BandManagerPWA.Services.Interfaces
 {
     public interface IEventService
     {
+        Task<Event> CreateEventAsync(EventDTO newEventDTO);
         Task<List<Event>> GetAllEventsAsync();
         Task<List<Event>> GetEventsByUserIdAsync(Guid id);
     }

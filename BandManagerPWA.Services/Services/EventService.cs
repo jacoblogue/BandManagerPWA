@@ -23,5 +23,21 @@ namespace BandManagerPWA.Services.Services
         {
             return await _context.Events.Where(e => e.Users.Any(u => u.Id == id)).ToListAsync() ?? [];
         }
+
+        public async Task<Event> CreateEventAsync(EventDTO newEventDTO)
+        {
+            var newEvent = new Event
+            {
+                Id = Guid.NewGuid(),
+                Title = newEventDTO.Title,
+                Description = newEventDTO.Description,
+                Location = newEventDTO.Location,
+                Date = newEventDTO.Date.ToUniversalTime()
+            };
+
+            _context.Events.Add(newEvent);
+            await _context.SaveChangesAsync();
+            return newEvent;
+        }
     }
 }

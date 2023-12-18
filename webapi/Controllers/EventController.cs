@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using webapi.Models;
+using BandManagerPWA.Utils.Models;
 using webapi.utilities;
 
 namespace webapi.Controllers
@@ -83,29 +84,26 @@ namespace webapi.Controllers
         [HttpPost, Authorize(Policy = "create:events")]
         public async Task<IActionResult> CreateEvent([FromBody] EventDTO incomingEvent)
         {
-            var newEvent = new Event
+            try
             {
-                Id = Guid.NewGuid(),
-                Title = incomingEvent.Title,
-                Description = incomingEvent.Description,
-                Location = incomingEvent.Location,
-                Date = incomingEvent.Date.ToUniversalTime()
-            };
+                Event newEvent = await _eventService.CreateEventAsync(incomingEvent);
 
+                var message = new EventMessage
+                {
+                    MessageType = MessageType.EventAdded,
+                    Event = newEvent
+                };
 
-            await _context.AddAsync(newEvent);
-            await _context.SaveChangesAsync();
+                await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
 
-            var message = new EventMessage
+                Log.Information("Event created: {@Event}", newEvent);
+                return Ok(newEvent);
+            }
+            catch (Exception ex)
             {
-                MessageType = MessageType.EventAdded,
-                Event = newEvent
-            };
-
-            await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
-
-            Log.Information("Event created: {@Event}", newEvent);
-            return Ok(newEvent);
+                Log.Error(ex.Message);
+                return Problem(ex.Message);
+            }
         }
 
         [HttpDelete("{id}"), Authorize(Policy = "delete:events")]

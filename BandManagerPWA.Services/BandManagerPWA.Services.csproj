@@ -15,4 +15,8 @@
     <ProjectReference Include="..\BandManagerPWA.Utils\BandManagerPWA.Utils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>
