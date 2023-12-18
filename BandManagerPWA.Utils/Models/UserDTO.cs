@@ -1,4 +1,4 @@
-﻿namespace webapi.Models
+﻿namespace BandManagerPWA.Utils.Models
 {
     public class UserDTO
     {

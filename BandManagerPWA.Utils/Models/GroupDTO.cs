@@ -1,6 +1,4 @@
-﻿using BandManagerPWA.DataAccess.Models;
-
-namespace webapi.Models
+﻿namespace BandManagerPWA.Utils.Models
 {
     public class GroupDTO
     {

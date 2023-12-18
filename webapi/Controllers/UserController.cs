@@ -1,7 +1,7 @@
 ﻿using BandManagerPWA.DataAccess.Models;
+using BandManagerPWA.Utils.Models;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using webapi.Models;
 
 namespace webapi.Controllers
 {
