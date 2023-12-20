@@ -14,6 +14,11 @@ namespace BandManagerPWA.Services.Services
             _context = context;
         }
 
+        public async Task<Event?> GetEventByIdAsync(Guid id)
+        {
+            return await _context.Events.FirstOrDefaultAsync(e => e.Id == id);
+        }
+
         public async Task<List<Event>> GetAllEventsAsync()
         {
             return await _context.Events.ToListAsync() ?? [];
@@ -38,6 +43,24 @@ namespace BandManagerPWA.Services.Services
             _context.Events.Add(newEvent);
             await _context.SaveChangesAsync();
             return newEvent;
+        }
+
+        public async Task<Event> UpdateEventAsync(EventDTO updatedEventDTO)
+        {
+            var existingEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == updatedEventDTO.Id);
+
+            if (existingEvent is null)
+            {
+                throw new Exception("Event not found");
+            }
+
+            existingEvent.Title = updatedEventDTO.Title;
+            existingEvent.Description = updatedEventDTO.Description;
+            existingEvent.Location = updatedEventDTO.Location;
+            existingEvent.Date = updatedEventDTO.Date.ToUniversalTime();
+
+            await _context.SaveChangesAsync();
+            return existingEvent;
         }
     }
 }

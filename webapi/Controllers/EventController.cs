@@ -131,7 +131,7 @@ namespace webapi.Controllers
         }
 
         [HttpPut, Authorize(Policy = "update:events")]
-        public async Task<IActionResult> UpdateEvent(EventDTO updatedEvent)
+        public async Task<IActionResult> UpdateEvent(EventDTO updatedEventDTO)
         {
             try
             {
@@ -140,7 +140,7 @@ namespace webapi.Controllers
                 bool writeAll = User.HasClaim("permissions", "write:all");
                 if (writeAll)
                 {
-                    var eventToUpdate = _context.Events.FirstOrDefault(e => e.Id == updatedEvent.Id);
+                    var eventToUpdate = await _eventService.GetEventByIdAsync(updatedEventDTO.Id);
 
                     if (eventToUpdate == null)
                     {
@@ -148,22 +148,17 @@ namespace webapi.Controllers
                         return NotFound("Event not found");
                     }
 
-                    eventToUpdate.Title = updatedEvent.Title;
-                    eventToUpdate.Description = updatedEvent.Description;
-                    eventToUpdate.Location = updatedEvent.Location;
-                    eventToUpdate.Date = updatedEvent.Date.ToUniversalTime();
-
-                    await _context.SaveChangesAsync();
+                    var updatedEvent = await _eventService.UpdateEventAsync(updatedEventDTO);
 
                     var message = new EventMessage
                     {
                         MessageType = MessageType.EventUpdated,
-                        Event = eventToUpdate
+                        Event = updatedEvent
                     };
                     await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
 
-                    Log.Information("Event updated: {@Event}", eventToUpdate);
-                    return Ok(eventToUpdate);
+                    Log.Information("Event updated: {@Event}", updatedEvent);
+                    return Ok(updatedEvent);
                 }
                 else
                 {
@@ -175,7 +170,7 @@ namespace webapi.Controllers
 
                     // get user's email and only get their events
                     var userEmail = User.Claims.FirstOrDefault(c => c.Type == _emailClaimType)?.Value;
-                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+                    var user = await _userService.GetUserByEmailAsync(userEmail);
 
                     if (user == null)
                     {
@@ -183,7 +178,7 @@ namespace webapi.Controllers
                         return BadRequest("User not found");
                     }
 
-                    var eventToUpdate = await _context.Events.Include(e => e.Users).FirstOrDefaultAsync(e => e.Id == updatedEvent.Id);
+                    var eventToUpdate = await _eventService.GetEventByIdAsync(updatedEventDTO.Id);
 
                     if (eventToUpdate == null)
                     {
@@ -197,13 +192,17 @@ namespace webapi.Controllers
                         return BadRequest("User does not have permission to update this event");
                     }
 
-                    eventToUpdate.Title = updatedEvent.Title;
-                    eventToUpdate.Description = updatedEvent.Description;
-                    eventToUpdate.Location = updatedEvent.Location;
-                    eventToUpdate.Date = updatedEvent.Date.ToUniversalTime();
+                    var updatedEvent = await _eventService.UpdateEventAsync(updatedEventDTO);
 
-                    await _context.SaveChangesAsync();
-                    return Ok(eventToUpdate);
+                    var message = new EventMessage
+                    {
+                        MessageType = MessageType.EventUpdated,
+                        Event = updatedEvent
+                    };
+                    await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
+
+                    Log.Information("Event updated: {@Event}", updatedEvent);
+                    return Ok(updatedEvent);
                 }
             }
             catch (Exception ex)

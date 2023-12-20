@@ -40,6 +40,8 @@ namespace BandManagerPWA.Test.Controllers
             _eventService.GetAllEventsAsync().Returns(new List<Event>());
             _eventService.GetEventsByUserIdAsync(Arg.Any<Guid>()).Returns(new List<Event>());
             _eventService.CreateEventAsync(Arg.Any<EventDTO>()).Returns(new Event());
+            _eventService.UpdateEventAsync(Arg.Any<EventDTO>()).Returns(new Event());
+            _eventService.GetEventByIdAsync(Arg.Any<Guid>()).Returns(new Event());
 
             // Mock user service
             _userService = Substitute.For<IUserService>();
@@ -167,7 +169,7 @@ namespace BandManagerPWA.Test.Controllers
         }
 
         [TestMethod]
-        public async Task UpdateEvent_WriteAll_UpdatesEvent()
+        public async Task UpdateEvent_WriteAll_CallsUpdateEvent()
         {
             // Arrange
             var newEvent = new Event
@@ -210,16 +212,11 @@ namespace BandManagerPWA.Test.Controllers
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             var okResult = result as OkObjectResult;
             Assert.IsInstanceOfType(okResult.Value, typeof(Event));
-            var dbEvent = okResult.Value as Event;
-            Assert.AreEqual(updatedEvent.Id, dbEvent.Id);
-            Assert.AreEqual(updatedEvent.Title, dbEvent.Title);
-            Assert.AreEqual(updatedEvent.Date, dbEvent.Date);
-            Assert.AreEqual(updatedEvent.Location, dbEvent.Location);
-            Assert.AreEqual(updatedEvent.Description, dbEvent.Description);
+            await _eventService.Received().UpdateEventAsync(Arg.Any<EventDTO>());
         }
 
         [TestMethod]
-        public async Task UpdateEvent_UpdatesEventWithUser()
+        public async Task UpdateEvent_UserHasPermission_CallsUpdateEvent()
         {
             // Arrange
             var user = new User
@@ -240,6 +237,10 @@ namespace BandManagerPWA.Test.Controllers
             await _context.AddAsync(newEvent);
             await _context.AddAsync(user);
             await _context.SaveChangesAsync();
+
+            // getEventbyIdAsync returns event with user in users list
+            _userService.GetUserByEmailAsync(Arg.Any<string>()).Returns(user);
+            _eventService.GetEventByIdAsync(Arg.Any<Guid>()).Returns(newEvent);
 
             var httpContextUser = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -271,15 +272,7 @@ namespace BandManagerPWA.Test.Controllers
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             var okResult = result as OkObjectResult;
             Assert.IsInstanceOfType(okResult.Value, typeof(Event));
-            var dbEvent = okResult.Value as Event;
-            Assert.AreEqual(updatedEvent.Id, dbEvent.Id);
-            Assert.AreEqual(updatedEvent.Title, dbEvent.Title);
-            Assert.AreEqual(updatedEvent.Date, dbEvent.Date);
-            Assert.AreEqual(updatedEvent.Location, dbEvent.Location);
-            Assert.AreEqual(updatedEvent.Description, dbEvent.Description);
-            Assert.AreEqual(1, dbEvent.Users.Count);
-            Assert.AreEqual(user.Id, dbEvent.Users[0].Id);
-            Assert.AreEqual(user.Email, dbEvent.Users[0].Email);
+            await _eventService.Received().UpdateEventAsync(Arg.Any<EventDTO>());
         }
     }
 }
