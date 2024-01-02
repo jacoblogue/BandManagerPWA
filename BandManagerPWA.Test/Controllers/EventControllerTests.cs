@@ -47,7 +47,7 @@ namespace BandManagerPWA.Test.Controllers
             _userService = Substitute.For<IUserService>();
             _userService.GetUserByEmailAsync(Arg.Any<string>()).Returns(new User());
 
-            _controller = new EventController(hubContext, _userService, _eventService, _context);
+            _controller = new EventController(hubContext, _userService, _eventService);
         }
 
         [TestMethod]
