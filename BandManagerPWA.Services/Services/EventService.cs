@@ -1,5 +1,6 @@
 ﻿using BandManagerPWA.DataAccess.Models;
 using BandManagerPWA.Services.Interfaces;
+using BandManagerPWA.Utils;
 using BandManagerPWA.Utils.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,14 +32,7 @@ namespace BandManagerPWA.Services.Services
 
         public async Task<Event> CreateEventAsync(EventDTO newEventDTO)
         {
-            var newEvent = new Event
-            {
-                Id = Guid.NewGuid(),
-                Title = newEventDTO.Title,
-                Description = newEventDTO.Description,
-                Location = newEventDTO.Location,
-                Date = newEventDTO.Date.ToUniversalTime()
-            };
+            var newEvent = EventDtoTransformer.TransformToEvent(newEventDTO);
 
             _context.Events.Add(newEvent);
             await _context.SaveChangesAsync();

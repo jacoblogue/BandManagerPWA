@@ -9,6 +9,7 @@ using Serilog;
 using Serilog.Sinks.MSSqlServer;
 using BandManagerPWA.Services.Services;
 using BandManagerPWA.Services.Interfaces;
+using BandManagerPWA.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
