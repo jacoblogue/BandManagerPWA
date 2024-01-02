@@ -271,7 +271,7 @@ namespace BandManagerPWA.Test.Controllers
             // Assert
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             var okResult = result as OkObjectResult;
-            Assert.IsInstanceOfType(okResult.Value, typeof(Event));
+            Assert.IsInstanceOfType(okResult.Value, typeof(EventDTO));
             await _eventService.Received().UpdateEventAsync(Arg.Any<EventDTO>());
         }
     }

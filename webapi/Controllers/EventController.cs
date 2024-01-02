@@ -3,11 +3,11 @@ using BandManagerPWA.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 using webapi.Models;
 using BandManagerPWA.Utils.Models;
 using webapi.utilities;
+using BandManagerPWA.Utils;
 
 namespace webapi.Controllers
 {
@@ -44,6 +44,7 @@ namespace webapi.Controllers
                 bool readAll = User.HasClaim("permissions", "read:all");
 
                 List<Event> events = [];
+                List<EventDTO> eventDTOs = [];
 
                 if (readAll)
                 {
@@ -70,9 +71,18 @@ namespace webapi.Controllers
 
                     // TODO: Pagination?
                     events = await _eventService.GetEventsByUserIdAsync(user.Id);
+                    // Convert to DTO
+                    eventDTOs = events.Select(e => new EventDTO
+                    {
+                        Id = e.Id,
+                        Title = e.Title,
+                        Description = e.Description,
+                        Location = e.Location,
+                        Date = e.Date.UtcDateTime
+                    }).ToList();
                 }
 
-                return Ok(events);
+                return Ok(eventDTOs);
             }
             catch (Exception ex)
             {
@@ -84,6 +94,11 @@ namespace webapi.Controllers
         [HttpPost, Authorize(Policy = "create:events")]
         public async Task<IActionResult> CreateEvent([FromBody] EventDTO incomingEvent)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
                 Event newEvent = await _eventService.CreateEventAsync(incomingEvent);
@@ -97,7 +112,8 @@ namespace webapi.Controllers
                 await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
 
                 Log.Information("Event created: {@Event}", newEvent);
-                return Ok(newEvent);
+                var returnEventDto = EventDtoTransformer.TransformToDto(newEvent);
+                return Ok(returnEventDto);
             }
             catch (Exception ex)
             {
@@ -131,7 +147,7 @@ namespace webapi.Controllers
         }
 
         [HttpPut, Authorize(Policy = "update:events")]
-        public async Task<IActionResult> UpdateEvent(EventDTO updatedEventDTO)
+        public async Task<IActionResult> UpdateEvent(EventDTO eventToUpdateDTO)
         {
             try
             {
@@ -140,7 +156,7 @@ namespace webapi.Controllers
                 bool writeAll = User.HasClaim("permissions", "write:all");
                 if (writeAll)
                 {
-                    var eventToUpdate = await _eventService.GetEventByIdAsync(updatedEventDTO.Id);
+                    var eventToUpdate = await _eventService.GetEventByIdAsync(eventToUpdateDTO.Id);
 
                     if (eventToUpdate == null)
                     {
@@ -148,7 +164,7 @@ namespace webapi.Controllers
                         return NotFound("Event not found");
                     }
 
-                    var updatedEvent = await _eventService.UpdateEventAsync(updatedEventDTO);
+                    var updatedEvent = await _eventService.UpdateEventAsync(eventToUpdateDTO);
 
                     var message = new EventMessage
                     {
@@ -178,7 +194,7 @@ namespace webapi.Controllers
                         return BadRequest("User not found");
                     }
 
-                    var eventToUpdate = await _eventService.GetEventByIdAsync(updatedEventDTO.Id);
+                    var eventToUpdate = await _eventService.GetEventByIdAsync(eventToUpdateDTO.Id);
 
                     if (eventToUpdate == null)
                     {
@@ -192,7 +208,7 @@ namespace webapi.Controllers
                         return BadRequest("User does not have permission to update this event");
                     }
 
-                    var updatedEvent = await _eventService.UpdateEventAsync(updatedEventDTO);
+                    var updatedEvent = await _eventService.UpdateEventAsync(eventToUpdateDTO);
 
                     var message = new EventMessage
                     {
@@ -202,7 +218,15 @@ namespace webapi.Controllers
                     await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
 
                     Log.Information("Event updated: {@Event}", updatedEvent);
-                    return Ok(updatedEvent);
+                    EventDTO updatedEventDTO = new EventDTO
+                    {
+                        Id = updatedEvent.Id,
+                        Title = updatedEvent.Title,
+                        Description = updatedEvent.Description,
+                        Location = updatedEvent.Location,
+                        Date = updatedEvent.Date.UtcDateTime
+                    };
+                    return Ok(updatedEventDTO);
                 }
             }
             catch (Exception ex)
