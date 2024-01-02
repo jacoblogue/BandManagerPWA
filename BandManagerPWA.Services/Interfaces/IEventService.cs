@@ -11,7 +11,14 @@ namespace BandManagerPWA.Services.Interfaces
         /// <param name="newEventDTO">The data transfer object containing event information.</param>
         /// <returns>The newly created event.</returns>
         Task<Event> CreateEventAsync(EventDTO newEventDTO);
-        
+
+        /// <summary>
+        /// Deletes an event by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the event.</param>
+        /// <returns>The deleted event if found; otherwise, null.</returns>
+        Task<Event?> DeleteEventAsync(Guid id);
+
         /// <summary>
         /// Retrieves all events.
         /// </summary>

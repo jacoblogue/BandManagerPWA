@@ -17,7 +17,7 @@ namespace BandManagerPWA.Services.Services
 
         public async Task<Event?> GetEventByIdAsync(Guid id)
         {
-            return await _context.Events.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.Events.FindAsync(id);
         }
 
         public async Task<List<Event>> GetAllEventsAsync()
@@ -41,7 +41,7 @@ namespace BandManagerPWA.Services.Services
 
         public async Task<Event> UpdateEventAsync(EventDTO updatedEventDTO)
         {
-            var existingEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == updatedEventDTO.Id);
+            var existingEvent = await _context.Events.FindAsync(updatedEventDTO.Id);
 
             if (existingEvent is null)
             {
@@ -55,6 +55,19 @@ namespace BandManagerPWA.Services.Services
 
             await _context.SaveChangesAsync();
             return existingEvent;
+        }
+
+        public async Task<Event?> DeleteEventAsync(Guid id)
+        {
+            var eventToDelete = await _context.Events.FindAsync(id);
+            if (eventToDelete != null)
+            {
+                _context.Remove(eventToDelete);
+                await _context.SaveChangesAsync();
+                return eventToDelete;
+            }
+
+            return null;
         }
     }
 }
