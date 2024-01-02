@@ -19,13 +19,11 @@ namespace webapi.Controllers
         private readonly string _emailClaimType = "https://bandmanager.com/email";
         private IEventService _eventService;
         private IUserService _userService;
-        private ApplicationDbContext _context;
-        public EventController(IHubContext<EventHub> hubContext, IUserService userService, IEventService eventService, ApplicationDbContext context)
+        public EventController(IHubContext<EventHub> hubContext, IUserService userService, IEventService eventService)
         {
             _hubContext = hubContext;
             _userService = userService;
             _eventService = eventService;
-            _context = context;
         }
 
         [HttpGet, Authorize(Policy = "read:events")]
