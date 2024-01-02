@@ -31,9 +31,27 @@ namespace BandManagerPWA.Test.Services
             // Arrange
             var events = new List<Event>
             {
-                new Event { Id = new Guid(), Title = "Event 1" },
-                new Event { Id = new Guid(), Title = "Event 2" },
-                new Event { Id = new Guid(), Title = "Event 3" }
+                new Event
+                {
+                    Title = "Event 1",
+                    Description = "Event 1 Description",
+                    Location = "Event 1 Location",
+                    Date = new DateTime(2018, 1, 1)
+                },
+                new Event
+                {
+                    Title = "Event 2",
+                    Description = "Event 2 Description",
+                    Location = "Event 2 Location",
+                    Date = new DateTime(2019, 1, 1)
+                },
+                new Event
+                {
+                    Title = "Event 3",
+                    Description = "Event 3 Description",
+                    Location = "Event 3 Location",
+                    Date = new DateTime(2020, 1, 1)
+                }
             };
 
             _context.Events.AddRange(events);
@@ -69,6 +87,41 @@ namespace BandManagerPWA.Test.Services
             Assert.AreEqual(newEvent.Description, result.Description);
             Assert.AreEqual(newEvent.Location, result.Location);
             Assert.AreEqual(newEvent.Date, result.Date);
+        }
+
+        [TestMethod]
+        public async Task UpdateEventAsync_UpdatesExistingEvent()
+        {
+            // Arrange
+            var existingEvent = new Event
+            {
+                Id = new Guid(),
+                Title = "Existing Event",
+                Description = "Existing Event Description",
+                Location = "Existing Event Location",
+                Date = new DateTime(2018, 1, 1)
+            };
+
+            _context.Events.Add(existingEvent);
+            _context.SaveChanges();
+
+            var updatedEvent = new EventDTO
+            {
+                Id = existingEvent.Id,
+                Title = "Updated Event",
+                Description = "Updated Event Description",
+                Location = "Updated Event Location",
+                Date = new DateTime(2019, 1, 1)
+            };
+
+            // Act
+            var result = await _eventService.UpdateEventAsync(updatedEvent);
+
+            // Assert
+            Assert.AreEqual(updatedEvent.Title, result.Title);
+            Assert.AreEqual(updatedEvent.Description, result.Description);
+            Assert.AreEqual(updatedEvent.Location, result.Location);
+            Assert.AreEqual(updatedEvent.Date, result.Date);
         }
     }
 }
