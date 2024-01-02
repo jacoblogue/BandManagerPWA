@@ -142,8 +142,9 @@ namespace webapi.Controllers
             };
             await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
 
+            var returnEventDto = EventDtoTransformer.TransformToDto(eventToDelete);
             Log.Information("Event deleted: {@Event}", eventToDelete);
-            return Ok();
+            return Ok(returnEventDto);
         }
 
         [HttpPut, Authorize(Policy = "update:events")]
@@ -173,8 +174,9 @@ namespace webapi.Controllers
                     };
                     await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", message);
 
+                    var returnEventDto = EventDtoTransformer.TransformToDto(updatedEvent);
                     Log.Information("Event updated: {@Event}", updatedEvent);
-                    return Ok(updatedEvent);
+                    return Ok(returnEventDto);
                 }
                 else
                 {
