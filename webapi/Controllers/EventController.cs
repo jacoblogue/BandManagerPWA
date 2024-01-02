@@ -43,13 +43,13 @@ namespace webapi.Controllers
 
                 bool readAll = User.HasClaim("permissions", "read:all");
 
-                List<Event> events = [];
-                List<EventDTO> eventDTOs = [];
 
                 if (readAll)
                 {
-                    events = await _eventService.GetAllEventsAsync();
-                    return Ok(events);
+                    List<Event> events = await _eventService.GetAllEventsAsync();
+                    // Convert to DTO
+                    List<EventDTO> eventDTOs = EventDtoTransformer.TransformToDtoList(events);
+                    return Ok(eventDTOs);
                 }
                 else
                 {
@@ -70,19 +70,12 @@ namespace webapi.Controllers
                     }
 
                     // TODO: Pagination?
-                    events = await _eventService.GetEventsByUserIdAsync(user.Id);
+                    List<Event> events = await _eventService.GetEventsByUserIdAsync(user.Id);
                     // Convert to DTO
-                    eventDTOs = events.Select(e => new EventDTO
-                    {
-                        Id = e.Id,
-                        Title = e.Title,
-                        Description = e.Description,
-                        Location = e.Location,
-                        Date = e.Date.UtcDateTime
-                    }).ToList();
+                    List<EventDTO> eventDTOs = EventDtoTransformer.TransformToDtoList(events);
+                 
+                    return Ok(eventDTOs);
                 }
-
-                return Ok(eventDTOs);
             }
             catch (Exception ex)
             {
@@ -125,15 +118,12 @@ namespace webapi.Controllers
         [HttpDelete("{id}"), Authorize(Policy = "delete:events")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var eventToDelete = await _context.Events.FindAsync(id);
+            var eventToDelete = await _eventService.DeleteEventAsync(id);
 
             if (eventToDelete == null)
             {
                 return NotFound();
             }
-
-            _context.Remove(eventToDelete);
-            await _context.SaveChangesAsync();
 
             var message = new EventMessage
             {

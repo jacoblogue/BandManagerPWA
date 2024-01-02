@@ -51,27 +51,41 @@ namespace BandManagerPWA.Test.Controllers
         }
 
         [TestMethod]
-        public async Task Create_CreatesNewEvent()
+        public async Task CreateEvent_CallsCreateEventAsync()
         {
             // Arrange
             var newEvent = new EventDTO
             {
-                Id = Guid.NewGuid(),
-                Title = "Test Event",
-                Date = DateTime.Now,
-                Location = "Test Location",
-                Description = "Test Description"
+                Title = "New Event",
+                Description = "New Event Description",
+                Location = "New Event Location",
+                Date = DateTime.Now
+            };
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new("permissions", "create:all"),
+                new("https://bandmanager.com/email", "")
+            }));
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = user
+                }
             };
             // Act
             var result = await _controller.CreateEvent(newEvent);
             // Assert
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             var okResult = result as OkObjectResult;
-            Assert.IsInstanceOfType(okResult.Value, typeof(Event));
+            Assert.IsInstanceOfType(okResult.Value, typeof(EventDTO));
+            await _eventService.Received().CreateEventAsync(Arg.Any<EventDTO>());
         }
 
         [TestMethod]
-        public async Task Delete_DeletesEvent()
+        public async Task Delete_CallsDeleteEventAsync()
         {
             // Arrange
             var newEvent = new Event
@@ -85,10 +99,12 @@ namespace BandManagerPWA.Test.Controllers
             await _context.AddAsync(newEvent);
             await _context.SaveChangesAsync();
 
+            _eventService.DeleteEventAsync(Arg.Any<Guid>()).Returns(newEvent);
+
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
-                new("permissions", "delete:events"),
-                new("https://bandmanager.com/email", "test@test.com")
+                new("permissions", "delete:all"),
+                new("https://bandmanager.com/email", "")
             }));
 
             _controller.ControllerContext = new ControllerContext
@@ -98,23 +114,23 @@ namespace BandManagerPWA.Test.Controllers
                     User = user
                 }
             };
-
             // Act
             var result = await _controller.Delete(newEvent.Id);
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkResult));
-            var dbEvent = await _context.Events.FindAsync(newEvent.Id);
-            Assert.IsNull(dbEvent);
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            var okResult = result as OkObjectResult;
+            Assert.IsInstanceOfType(okResult.Value, typeof(EventDTO));
+            await _eventService.Received().DeleteEventAsync(Arg.Any<Guid>());
         }
 
         [TestMethod]
-        public async Task GetEvents_GetsAllEvents()
+        public async Task GetEvents_ReadAll_CallsGetAllEventsAsync()
         {
             // Arrange
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new("permissions", "read:all"),
-                new("https://bandmanager.com/email", "test@test.com")
+                new("https://bandmanager.com/email", "")
             }));
 
             _controller.ControllerContext = new ControllerContext
@@ -124,47 +140,38 @@ namespace BandManagerPWA.Test.Controllers
                     User = user
                 }
             };
-
             // Act
             var result = await _controller.GetEvents();
             // Assert
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             var okResult = result as OkObjectResult;
-            Assert.IsInstanceOfType(okResult.Value, typeof(List<Event>));
+            Assert.IsInstanceOfType(okResult.Value, typeof(List<EventDTO>));
             await _eventService.Received().GetAllEventsAsync();
         }
 
         [TestMethod]
-        public async Task GetEvents_GetsUserEvents()
+        public async Task GetEvents_CallsGetEventsByUserIdAsync()
         {
             // Arrange
-            var user = new User
-            {
-                Id = Guid.NewGuid(),
-                Email = "test@test.com"
-            };
-
-            var httpContextUser = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new("permissions", "read:events"),
-                new("https://bandmanager.com/email", "test@test.com")
+                new("https://bandmanager.com/email", "")
             }));
 
             _controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext
                 {
-                    User = httpContextUser
+                    User = user
                 }
             };
-
             // Act
             var result = await _controller.GetEvents();
             // Assert
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             var okResult = result as OkObjectResult;
-            Assert.IsInstanceOfType(okResult.Value, typeof(List<Event>));
-            var events = okResult.Value as List<Event>;
+            Assert.IsInstanceOfType(okResult.Value, typeof(List<EventDTO>));
             await _eventService.Received().GetEventsByUserIdAsync(Arg.Any<Guid>());
         }
 
@@ -211,7 +218,7 @@ namespace BandManagerPWA.Test.Controllers
             // Assert
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             var okResult = result as OkObjectResult;
-            Assert.IsInstanceOfType(okResult.Value, typeof(Event));
+            Assert.IsInstanceOfType(okResult.Value, typeof(EventDTO));
             await _eventService.Received().UpdateEventAsync(Arg.Any<EventDTO>());
         }
 

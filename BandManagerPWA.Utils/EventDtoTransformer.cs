@@ -41,5 +41,25 @@ namespace BandManagerPWA.Utils
                 Title = eventDto.Title
             };
         }
+
+        /// <summary>
+        /// Transforms a list of Event objects to a list of EventDTO objects.
+        /// </summary>
+        /// <param name="events">The list of Event objects to transform.</param>
+        /// <returns>The transformed list of EventDTO objects.</returns>
+        public static List<EventDTO> TransformToDtoList(List<Event> events)
+        {
+            return events.Select(TransformToDto).ToList();
+        }
+
+        /// <summary>
+        /// Transforms a list of EventDTO objects to a list of Event objects.
+        /// </summary>
+        /// <param name="eventDtos">The list of EventDTO objects to transform.</param>
+        /// <returns>The transformed list of Event objects.</returns>
+        public static List<Event> TransformToEventList(List<EventDTO> eventDtos)
+        {
+            return eventDtos.Select(TransformToEvent).ToList();
+        }
     }
 }
