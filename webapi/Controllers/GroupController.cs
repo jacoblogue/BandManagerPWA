@@ -1,4 +1,5 @@
 ﻿using BandManagerPWA.DataAccess.Models;
+using BandManagerPWA.Services.Interfaces;
 using BandManagerPWA.Utils.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,177 +12,197 @@ namespace webapi.Controllers
     [ApiController]
     public class GroupController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private readonly string _emailClaimType = "https://bandmanager.com/email";
+        private readonly IGroupService _groupService;
 
-        public GroupController(ApplicationDbContext context)
+        public GroupController(ApplicationDbContext context, IGroupService groupService)
         {
-            _context = context;
+            _groupService = groupService;
         }
 
         [HttpGet, Authorize(Policy = "read:groups")]
         public async Task<IActionResult> GetGroups()
         {
-            Log.Information("GetGroups endpoint hit");
-
-            List<Group> groups = [];
-
-            if (User is null)
+            try
             {
-                Log.Warning("User is null");
-                return BadRequest();
-            }
+                Log.Information("GetGroups endpoint hit");
 
-            bool readAll = User.HasClaim("permissions", "read:all");
+                List<Group> groups = [];
 
-            if (readAll)
-            {
-                groups = await _context.Groups.ToListAsync();
-            }
-            else
-            {
-                if (!User.HasClaim(c => c.Type == _emailClaimType))
+                if (User is null)
                 {
-                    Log.Warning("User email claim not found");
-                    return BadRequest("User email claim not found");
+                    Log.Warning("User is null");
+                    return BadRequest();
                 }
 
-                // get user's email and only get their groups
-                var userEmail = User.Claims.FirstOrDefault(c => c.Type == _emailClaimType)?.Value;
-                groups = await _context.Groups.Where(g => g.Users.Any(u => u.Email == userEmail)).ToListAsync();
-            }
+                bool readAll = User.HasClaim("permissions", "read:all");
 
-            // Return an empty list if no groups are found
-            return Ok(groups ?? []);
+                if (readAll)
+                {
+                    groups = await _groupService.GetAllGroupsAsync();
+                }
+                else
+                {
+                    if (!User.HasClaim(c => c.Type == _emailClaimType) ||
+                        string.IsNullOrWhiteSpace(User.Claims.FirstOrDefault(c => c.Type == _emailClaimType)?.Value))
+                    {
+                        Log.Warning("User email not found");
+                        return BadRequest("User email not found");
+                    }
+
+                    // get user's email and only get their groups
+                    var userEmail = User.Claims.FirstOrDefault(c => c.Type == _emailClaimType)?.Value;
+                    groups = await _groupService.GetGroupsByEmailAsync(userEmail);
+                }
+
+                // Return an empty list if no groups are found
+                return Ok(groups ?? []);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                throw;
+            }
         }
 
         [HttpGet("{id}"), Authorize(Policy = "read:groups")]
         public async Task<IActionResult> GetGroup(Guid id)
         {
-            Log.Information("GetGroup endpoint hit");
-
-            var group = _context.Groups.FirstOrDefault(g => g.Id == id);
-
-            if (group == null)
+            try
             {
-                return NotFound();
-            }
+                Log.Information("GetGroup endpoint hit");
 
-            return Ok(group);
+                var group = await _groupService.GetGroupByIdAsync(id);
+
+                if (group == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(group);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                throw;
+            }
         }
 
         [HttpPost, Authorize(Policy = "create:groups")]
         public async Task<IActionResult> CreateGroup([FromBody] GroupDTO incomingGroup)
         {
-            Log.Information("CreateGroup endpoint hit");
-            var newGroup = new Group
+            try
             {
-                Id = Guid.NewGuid(),
-                Name = incomingGroup.Name,
-                Description = incomingGroup.Description,
-                Users = []
-            };
+                Log.Information("CreateGroup endpoint hit");
+                var newGroup = new Group
+                {
+                    Id = Guid.NewGuid(),
+                    Name = incomingGroup.Name,
+                    Description = incomingGroup.Description,
+                    Users = []
+                };
 
-            await _context.Groups.AddAsync(newGroup);
-            await _context.SaveChangesAsync();
+                await _groupService.CreateGroupAsync(newGroup);
 
-            Log.Information("New group created: {@newGroup}", newGroup);
-            return Ok(newGroup);
+                return Ok(newGroup);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                throw;
+            }
         }
 
         [HttpDelete("{id}"), Authorize(Policy = "delete:groups")]
         public async Task<IActionResult> DeleteGroup(Guid id)
         {
-            Log.Information("DeleteGroup endpoint hit");
-
-            var group = _context.Groups.FirstOrDefault(g => g.Id == id);
-
-            if (group == null)
+            try
             {
-                return NotFound();
+                Log.Information("DeleteGroup endpoint hit");
+
+                var group = await _groupService.DeleteGroupAsync(id);
+
+                if (group == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok();
             }
-
-            _context.Groups.Remove(group);
-            await _context.SaveChangesAsync();
-
-            Log.Information("Group deleted: {@Group}", group);
-            return Ok();
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                throw;
+            }
         }
 
         [HttpPut("{id}/info"), Authorize(Policy = "update:groups")]
         public async Task<IActionResult> UpdateGroupInfo(Guid id, GroupDTO updatedGroup)
         {
-            Log.Information("UpdateGroupInfo endpoint hit");
-
-            var group = _context.Groups.FirstOrDefault(g => g.Id == id);
-
-            if (group == null)
+            try
             {
-                return NotFound();
+                Log.Information("UpdateGroupInfo endpoint hit");
+
+                var result = await _groupService.UpdateGroupInfoAsync(id, updatedGroup);
+
+                if (result == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
             }
-
-            group.Name = updatedGroup.Name;
-            group.Description = updatedGroup.Description;
-            await _context.SaveChangesAsync();
-
-            bool anyChanges = _context.ChangeTracker.Entries().Any(e => e.State == EntityState.Modified);
-
-            if (anyChanges)
-                Log.Information("Group updated: {@Group}", group);
-
-            return Ok(group);
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                throw;
+            }
         }
 
         [HttpPost("{groupId}/members")]
         public async Task<IActionResult> AddMember(Guid groupId, string userEmail)
         {
-            Log.Information("AddMember endpoint hit");
-
-            var group = _context.Groups.FirstOrDefault(g => g.Id == groupId);
-
-            if (group == null)
+            try
             {
-                return NotFound();
+                Log.Information("AddMember endpoint hit");
+
+                var group = await _groupService.AddMemberAsync(groupId, userEmail);
+
+                if (group == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok();
             }
-
-            var user = _context.Users.FirstOrDefault(u => u.Email == userEmail);
-
-            if (user == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                Log.Error(ex.Message);
+                throw;
             }
-
-            group.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            Log.Information("User added to group: {@User}", user);
-            return Ok();
         }
 
         [HttpDelete("{groupId}/members/{userId}")]
         public async Task<IActionResult> RemoveMember(Guid groupId, Guid userId)
         {
-            Log.Information("RemoveMember endpoint hit");
-
-            var group = _context.Groups.FirstOrDefault(g => g.Id == groupId);
-
-            if (group == null)
+            try
             {
-                return NotFound();
+                Log.Information("RemoveMember endpoint hit");
+
+                var group = await _groupService.RemoveMemberAsync(groupId, userId);
+
+                if (group == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok();
             }
-
-            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-
-            if (user == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                Log.Error(ex.Message);
+                throw;
             }
-
-            group.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            Log.Information("User removed from group: {@User}", user);
-            return Ok();
         }
     }
 }
