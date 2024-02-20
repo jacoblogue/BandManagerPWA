@@ -159,7 +159,7 @@ namespace webapi.Controllers
             }
         }
 
-        [HttpPost("{groupId}/members")]
+        [HttpPost("{groupId}/members"), Authorize(Policy = "update:groups")]
         public async Task<IActionResult> AddMember(Guid groupId, string userEmail)
         {
             try
@@ -182,7 +182,7 @@ namespace webapi.Controllers
             }
         }
 
-        [HttpDelete("{groupId}/members/{userId}")]
+        [HttpDelete("{groupId}/members/{userId}"), Authorize(Policy = "update:groups")]
         public async Task<IActionResult> RemoveMember(Guid groupId, Guid userId)
         {
             try
