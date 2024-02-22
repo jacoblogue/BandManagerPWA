@@ -61,5 +61,13 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Events.sql" />
+    <Build Include="dbo\Tables\Users.sql" />
+    <Build Include="dbo\Tables\Songs.sql" />
+    <Build Include="dbo\Tables\GroupUser.sql" />
+    <Build Include="dbo\Tables\Groups.sql" />
+    <Build Include="dbo\Tables\EventUser.sql" />
+    <Build Include="dbo\Tables\EventGroup.sql" />
+    <Build Include="dbo\Tables\BandManagerLogs.sql" />
+    <Build Include="dbo\Tables\Artists.sql" />
   </ItemGroup>
 </Project>

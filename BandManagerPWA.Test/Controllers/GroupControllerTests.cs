@@ -1,4 +1,5 @@
 ﻿using BandManagerPWA.DataAccess.Models;
+using BandManagerPWA.Services.Services;
 using BandManagerPWA.Utils.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace BandManagerPWA.Test.Controllers
     {
         private ApplicationDbContext _context;
         private GroupController _controller;
-
+        private GroupService _groupService;
 
         [TestInitialize]
         public void Initialize()
@@ -24,8 +25,10 @@ namespace BandManagerPWA.Test.Controllers
                 .UseInMemoryDatabase(databaseName: "BandManagerPWA")
                 .Options;
 
+            _groupService = new GroupService(_context);
+
             _context = new ApplicationDbContext(options);
-            _controller = new GroupController(_context);
+            _controller = new GroupController(_context, _groupService);
 
             // add controllerContext with user claims
 
