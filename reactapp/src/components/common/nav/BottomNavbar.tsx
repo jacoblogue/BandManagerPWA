@@ -1,6 +1,12 @@
 import { useThemeStore } from "@/state/themeStore";
 import React from "react";
-import { BiCalendar, BiCalendarEvent, BiCalendarPlus } from "react-icons/bi";
+import {
+  BiCalendar,
+  BiCalendarEvent,
+  BiCalendarPlus,
+  BiMusic,
+  BiSolidMusic,
+} from "react-icons/bi";
 import { NavLink, useLocation } from "react-router-dom";
 import { Navbar, Nav, NavItem, Button } from "reactstrap";
 import styles from "./BottomNavbar.module.css";
@@ -24,12 +30,20 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
     >
       <Nav className="w-100 d-flex justify-content-around ">
         <NavItem className="">
-          <NavLink to="/events" className="nav-link">
+          {/* <NavLink to="/events" className="nav-link">
             <span
               className={`d-flex flex-column justify-content-center align-items-center text-${buttonColor}`}
             >
               <BiCalendarEvent size={"1.6rem"} />
               Events
+            </span>
+          </NavLink> */}
+          <NavLink to="/songs" className={"nav-link"}>
+            <span
+              className={`d-flex flex-column justify-content-center align-items-center text-${buttonColor}`}
+            >
+              <BiSolidMusic size={"1.6rem"} />
+              Songs
             </span>
           </NavLink>
         </NavItem>

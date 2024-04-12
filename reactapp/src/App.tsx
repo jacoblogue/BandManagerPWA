@@ -19,6 +19,7 @@ import AuthenticationGuard from "./components/auth/AuthenticationGuard";
 import ProfilePage from "./components/profile/ProfilePage";
 import AdminPage from "./components/admin/AdminPage";
 import Groups from "./components/groups/GroupsPage";
+import SongPage from "./components/songs/SongPage";
 
 export default function App() {
   const { replaceEvents, deleteEvent, addEvent } = useEventStore();
@@ -148,6 +149,11 @@ export default function App() {
       path: "/groups",
       element: Groups,
       name: "Groups",
+    },
+    {
+      path: "/songs",
+      element: SongPage,
+      name: "Songs",
     },
   ];
 
