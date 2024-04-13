@@ -19,7 +19,7 @@ namespace BandManagerPWA.Services.Services
 
         public async Task<List<Song>> GetAllSongsAsync()
         {
-            return await _context.Songs.ToListAsync() ?? [];
+            return await _context.Songs.Include(s => s.Artist).ToListAsync() ?? [];
         }
 
         public async Task<List<Song>> GetSongsByArtstIdAsync(Guid artistId)

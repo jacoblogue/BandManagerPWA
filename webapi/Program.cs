@@ -50,6 +50,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ISongService, SongService>();
 builder.Services.AddSignalR();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -96,7 +97,8 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("read:groups", policy => policy.Requirements.Add(new HasScopeRequirement("read:groups", issuer)))
     .AddPolicy("create:groups", policy => policy.Requirements.Add(new HasScopeRequirement("create:groups", issuer)))
     .AddPolicy("delete:groups", policy => policy.Requirements.Add(new HasScopeRequirement("delete:groups", issuer)))
-    .AddPolicy("update:groups", policy => policy.Requirements.Add(new HasScopeRequirement("update:groups", issuer)));
+    .AddPolicy("update:groups", policy => policy.Requirements.Add(new HasScopeRequirement("update:groups", issuer)))
+    .AddPolicy("read:songs", policy => policy.Requirements.Add(new HasScopeRequirement("read:songs", issuer)));
 
 
 var app = builder.Build();

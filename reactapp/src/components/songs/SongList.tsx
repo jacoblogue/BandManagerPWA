@@ -1,8 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Table } from "reactstrap";
 import { mockSongs } from "../../../mockData/mockSongs";
+import { api } from "@/utilities/api";
+import useSongStore from "@/state/songStore";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function SongList() {
+  const { songs, loading, error, fetchSongs } = useSongStore();
+  const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
+  useEffect(() => {
+    fetchAccessTokenAndSongs();
+  }, []);
+
+  const fetchAccessTokenAndSongs = async () => {
+    const accessToken = await getAccessTokenWithPopup({
+      authorizationParams: {
+        audience: import.meta.env.VITE_API_AUDIENCE,
+        scope: "read:songs",
+      },
+    });
+    if (accessToken) {
+      fetchSongs(accessToken);
+    }
+  };
+
   return (
     <div>
       <Table>
@@ -14,7 +35,7 @@ export default function SongList() {
           </tr>
         </thead>
         <tbody>
-          {mockSongs.map((song) => (
+          {songs.map((song) => (
             <tr key={song.id}>
               <td>{song.title}</td>
               <td>{song.artist}</td>
