@@ -1,7 +1,10 @@
 ﻿using BandManagerPWA.DataAccess.Models;
 using BandManagerPWA.Services.Interfaces;
+using BandManagerPWA.Utils;
+using BandManagerPWA.Utils.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace webapi.Controllers
 {
@@ -20,8 +23,19 @@ namespace webapi.Controllers
         {
             try
             {
+                Log.Information("GetSongs endpoint hit");
+
+                if (User is null)
+                {
+                    Log.Warning("User is null");
+                    return BadRequest();
+                }
+
                 List<Song> songs = await _songService.GetAllSongsAsync();
-                return Ok(songs);
+
+                List<SongDTO> songDTOs= SongDtoTransformer.TransformToDtoList(songs);
+
+                return Ok(songDTOs);
             }
             catch (Exception ex)
             {
