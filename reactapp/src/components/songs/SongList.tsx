@@ -1,5 +1,6 @@
 import React from "react";
 import { Table } from "reactstrap";
+import { mockSongs } from "../../../mockData/mockSongs";
 
 export default function SongList() {
   return (
@@ -13,16 +14,13 @@ export default function SongList() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>song1</td>
-            <td>artist1</td>
-            <td>key1</td>
-          </tr>
-          <tr>
-            <td>song2</td>
-            <td>artist2</td>
-            <td>key2</td>
-          </tr>
+          {mockSongs.map((song) => (
+            <tr key={song.id}>
+              <td>{song.title}</td>
+              <td>{song.artist}</td>
+              <td>{song.key}</td>
+            </tr>
+          ))}
         </tbody>
       </Table>
     </div>

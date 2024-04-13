@@ -24,9 +24,9 @@ const TopNavbar = () => {
   return (
     <React.Fragment>
       <Navbar color={preferredColorScheme} expand="lg">
-        <NavbarToggler onClick={toggleSidebar}>
+        {/* <NavbarToggler onClick={toggleSidebar}>
           <BsArrowBarRight />
-        </NavbarToggler>
+        </NavbarToggler> */}
         <NavLink to={"/profile"} className="ms-auto">
           <span>
             {user && user.picture ? (
@@ -41,7 +41,7 @@ const TopNavbar = () => {
           </span>
         </NavLink>
       </Navbar>
-      <Sidebar setCollapsed={setCollapsed} collapsed={collapsed} />
+      {/* <Sidebar setCollapsed={setCollapsed} collapsed={collapsed} /> */}
     </React.Fragment>
   );
 };
