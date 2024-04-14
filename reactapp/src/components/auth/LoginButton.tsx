@@ -12,7 +12,7 @@ export default function LoginButton() {
           prompt: "consent",
         },
         appState: {
-          returnTo: "/events",
+          returnTo: "/songs",
         },
       });
     } catch (error) {

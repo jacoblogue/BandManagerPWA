@@ -10,7 +10,7 @@ export const CallbackPage: React.FC = () => {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      navigate("/events");
+      navigate("/songs");
     }
   }, [isLoading, isAuthenticated, navigate]);
 

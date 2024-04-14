@@ -10,7 +10,7 @@ export default function SignUpButton() {
       await loginWithRedirect({
         authorizationParams: { screen_hint: "signup" },
         appState: {
-          returnTo: "/events",
+          returnTo: "/songs",
         },
       });
     } catch (error) {

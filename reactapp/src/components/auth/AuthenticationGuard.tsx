@@ -56,7 +56,7 @@ const AuthenticationGuard: React.FC<AuthenticationGuardProps> = ({
     () =>
       withAuthenticationRequired(component, {
         onRedirecting: () => <PageLoader />,
-        returnTo: "/events",
+        returnTo: "/songs",
       }),
     [component]
   );
