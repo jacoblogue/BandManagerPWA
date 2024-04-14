@@ -13,7 +13,7 @@ export default function SongList() {
   }, []);
 
   const fetchAccessTokenAndSongs = async () => {
-    const accessToken = await getAccessTokenWithPopup({
+    const accessToken = await getAccessTokenSilently({
       authorizationParams: {
         audience: import.meta.env.VITE_API_AUDIENCE,
         scope: "read:songs",

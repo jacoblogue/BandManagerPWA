@@ -58,12 +58,12 @@ export default defineConfig({
     host: "0.0.0.0", // allows phone to connect
     proxy: {
       "^/eventHub": {
-        target: "https://localhost:7149/",
+        target: "https://bandmanager.local:7149/",
         secure: false,
         ws: true,
       },
       "^/api/*": {
-        target: "https://localhost:7149/",
+        target: "https://bandmanager.local:7149/",
         secure: false,
       },
     },
