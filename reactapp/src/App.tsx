@@ -33,69 +33,69 @@ export default function App() {
    * and replaces the existing list in the event store with the new list.
    * The connection is automatically re-established if it is lost.
    */
-  useEffect(() => {
-    let connection: signalR.HubConnection;
+  // useEffect(() => {
+  //   let connection: signalR.HubConnection;
 
-    const startConnection = async () => {
-      try {
-        connection = new signalR.HubConnectionBuilder()
-          .withUrl("/eventHub", {
-            skipNegotiation: true,
-            transport: signalR.HttpTransportType.WebSockets,
-          })
-          .withAutomaticReconnect([0, 1000, 5000, 10000, 30000])
-          .build();
+  //   const startConnection = async () => {
+  //     try {
+  //       connection = new signalR.HubConnectionBuilder()
+  //         .withUrl("/eventHub", {
+  //           skipNegotiation: true,
+  //           transport: signalR.HttpTransportType.WebSockets,
+  //         })
+  //         .withAutomaticReconnect([0, 1000, 5000, 10000, 30000])
+  //         .build();
 
-        connection.on("ReceiveEventUpdate", (message: SignalRMessage) => {
-          console.log("Received a SignalR message: ", message);
-          if (message && message.type === MessageTypeEnum.DeleteEvent) {
-            deleteEvent(message.eventId);
-          } else if (message && message.type === MessageTypeEnum.AddEvent) {
-            addEvent(message.event);
-          } else {
-            getAccessTokenSilently({
-              authorizationParams: {
-                audience: apiAudience,
-                scope: "read:events",
-              },
-            })
-              .then(async (accessToken) => {
-                try {
-                  const response = await axios.get<ExistingEventModel[]>(
-                    `/api/event`,
-                    {
-                      headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                      },
-                    }
-                  );
-                  replaceEvents(response.data);
-                } catch (err) {
-                  console.error(err);
-                }
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-          }
-        });
+  //       connection.on("ReceiveEventUpdate", (message: SignalRMessage) => {
+  //         console.log("Received a SignalR message: ", message);
+  //         if (message && message.type === MessageTypeEnum.DeleteEvent) {
+  //           deleteEvent(message.eventId);
+  //         } else if (message && message.type === MessageTypeEnum.AddEvent) {
+  //           addEvent(message.event);
+  //         } else {
+  //           getAccessTokenSilently({
+  //             authorizationParams: {
+  //               audience: apiAudience,
+  //               scope: "read:events",
+  //             },
+  //           })
+  //             .then(async (accessToken) => {
+  //               try {
+  //                 const response = await axios.get<ExistingEventModel[]>(
+  //                   `/api/event`,
+  //                   {
+  //                     headers: {
+  //                       Authorization: `Bearer ${accessToken}`,
+  //                     },
+  //                   }
+  //                 );
+  //                 replaceEvents(response.data);
+  //               } catch (err) {
+  //                 console.error(err);
+  //               }
+  //             })
+  //             .catch((error) => {
+  //               console.error(error);
+  //             });
+  //         }
+  //       });
 
-        await connection.start();
-        console.log("SignalR Connected.");
-      } catch (err) {
-        console.log("Error while establishing connection:", err);
-        setTimeout(() => startConnection(), 5000);
-      }
-    };
+  //       await connection.start();
+  //       console.log("SignalR Connected.");
+  //     } catch (err) {
+  //       console.log("Error while establishing connection:", err);
+  //       setTimeout(() => startConnection(), 5000);
+  //     }
+  //   };
 
-    startConnection();
+  //   startConnection();
 
-    return () => {
-      if (connection) {
-        connection.stop();
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (connection) {
+  //       connection.stop();
+  //     }
+  //   };
+  // }, []);
 
   /**
    * This `useEffect` hook listens for changes to the preferred color scheme and updates the Zustand store accordingly.
