@@ -9,7 +9,16 @@ import {
   BiSolidMusic,
 } from "react-icons/bi";
 import { NavLink, useLocation } from "react-router-dom";
-import { Navbar, Nav, NavItem, Button } from "reactstrap";
+import {
+  Navbar,
+  Nav,
+  NavItem,
+  Button,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 import styles from "./BottomNavbar.module.css";
 
 interface Props {
@@ -49,16 +58,21 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
           </NavLink>
         </NavItem>
         <NavItem className="">
-          <Button
-            className={`${styles.newButton} text-${buttonColor}`}
-            color={"link"}
-            onClick={() => setIsModalOpen(true)}
-          >
-            <span className="d-flex flex-column justify-content-center align-items-center">
-              <BiPlusCircle size={"1.6rem"} />
-              New
-            </span>
-          </Button>
+          <UncontrolledDropdown direction="up">
+            <DropdownToggle
+              className={`${styles.newButton} text-${buttonColor}`}
+              color={"link"}
+              onClick={() => setIsModalOpen(true)}
+            >
+              <span className="d-flex flex-column justify-content-center align-items-center">
+                <BiPlusCircle size={"1.6rem"} />
+                New
+              </span>
+            </DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem>Song</DropdownItem>
+            </DropdownMenu>
+          </UncontrolledDropdown>
         </NavItem>
         <NavItem>
           <NavLink
