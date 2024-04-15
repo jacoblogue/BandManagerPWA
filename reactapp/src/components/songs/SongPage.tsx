@@ -1,11 +1,17 @@
 import React from "react";
 import SongList from "./SongList";
-import { Container } from "reactstrap";
+import { Button, Col, Container, Row } from "reactstrap";
 
 export default function SongPage() {
   return (
     <Container fluid>
-      <SongList />
+      <Row>
+        <Col />
+        <Col sm={10}>
+          <SongList />
+        </Col>
+        <Col />
+      </Row>
     </Container>
   );
 }

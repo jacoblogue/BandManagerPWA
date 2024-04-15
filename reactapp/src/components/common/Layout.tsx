@@ -18,7 +18,7 @@ export default function Layout() {
       {/* Top Navbar */}
       {isAuthenticated && <TopNavbar />}
       {/* Main content */}
-      <div className="flex-grow-1 mb-5">
+      <div className="flex-grow-1">
         <Outlet />
       </div>
       {/* Bottom Navbar */}

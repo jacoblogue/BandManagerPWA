@@ -5,6 +5,7 @@ import {
   BiCalendarEvent,
   BiCalendarPlus,
   BiMusic,
+  BiPlusCircle,
   BiSolidMusic,
 } from "react-icons/bi";
 import { NavLink, useLocation } from "react-router-dom";
@@ -61,6 +62,18 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
             </Button>
           </NavItem>
         )}
+        <NavItem className="">
+          <Button
+            className={`${styles.newButton} text-${buttonColor}`}
+            color={"link"}
+            onClick={() => setIsModalOpen(true)}
+          >
+            <span className="d-flex flex-column justify-content-center align-items-center">
+              <BiPlusCircle size={"1.6rem"} />
+              New
+            </span>
+          </Button>
+        </NavItem>
         <NavItem>
           <NavLink
             to="/calendar"
