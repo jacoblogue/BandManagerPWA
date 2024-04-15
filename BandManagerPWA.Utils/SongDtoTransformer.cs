@@ -16,25 +16,22 @@ namespace BandManagerPWA.Utils
             };
         }
 
-        // TODO: Implement TransformToSong method. Get the Artist name using ArtistService.
-        //public static Song TransformToSong(SongDTO songDto)
-        //{
-        //    return new Song
-        //    {
-        //        Id = songDto.Id,
-        //        Title = songDto.Title,
-        //        Artist = songDto.Artist,
-        //    };
-        //}
+        public static Song TransformToSong(SongDTO songDto, Artist artist)
+        {
+
+            return new Song
+            {
+                Id = songDto.Id,
+                Title = songDto.Title,
+                Artist = artist,
+            };
+        }
 
         public static List<SongDTO> TransformToDtoList(List<Song> songs)
         {
             return songs.Select(TransformToDto).ToList();
         }
 
-        //public static List<Song> TransformToSongList(List<SongDTO> songDtos)
-        //{
-        //    return songDtos.Select(TransformToSong).ToList();
-        //}
+        //TODO: Implement TransformToSongList
     }
 }

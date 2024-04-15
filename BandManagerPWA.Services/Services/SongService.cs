@@ -26,5 +26,11 @@ namespace BandManagerPWA.Services.Services
         {
             return await _context.Songs.Where(s => s.Artist.Id == artistId).ToListAsync() ?? [];
         }
+
+        public async Task AddSongAsync(Song song)
+        {
+            await _context.Songs.AddAsync(song);
+            await _context.SaveChangesAsync();
+        }
     }
 }

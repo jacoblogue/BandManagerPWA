@@ -13,9 +13,11 @@ namespace webapi.Controllers
     public class SongController : ControllerBase
     {
         private ISongService _songService;
-        public SongController(ISongService songService)
+        private IArtistService _artistService;
+        public SongController(ISongService songService, IArtistService artistService)
         {
             _songService = songService;
+            _artistService = artistService;
         }
 
         [HttpGet, Authorize(Policy = "read:songs")]
@@ -36,6 +38,39 @@ namespace webapi.Controllers
                 List<SongDTO> songDTOs= SongDtoTransformer.TransformToDtoList(songs);
 
                 return Ok(songDTOs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost, Authorize(Policy = "write:songs")]
+        public async Task<IActionResult> AddSong([FromBody] SongDTO songDTO)
+        {
+            try
+            {
+                Log.Information("AddSong endpoint hit");
+
+                if (User is null)
+                {
+                    Log.Warning("User is null");
+                    return BadRequest();
+                }
+
+                var songArtist = await _artistService.GetArtistByNameAsync(songDTO.Artist);
+
+                if (songArtist is null)
+                {
+                    Log.Warning("Artist not found");
+                    return NotFound("Artist not found");
+                }
+
+                Song song = SongDtoTransformer.TransformToSong(songDTO, songArtist);
+                await _songService.AddSongAsync(song);
+                Log.Information($"Song added: {song.Title} by {song.Artist}");
+
+                return Ok();
             }
             catch (Exception ex)
             {
