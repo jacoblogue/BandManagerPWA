@@ -23,7 +23,7 @@ export default function Layout() {
       </div>
       {/* Bottom Navbar */}
       {isAuthenticated && <BottomNavbar setIsModalOpen={setIsModalOpen} />}
-      <CreateEventModal isOpen={isModalOpen} setModal={setIsModalOpen} />
+      {/* <CreateEventModal isOpen={isModalOpen} setModal={setIsModalOpen} /> */}
     </div>
   );
 }

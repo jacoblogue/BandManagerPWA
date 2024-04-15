@@ -48,20 +48,6 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
             </span>
           </NavLink>
         </NavItem>
-        {location.pathname === "/events" && (
-          <NavItem className="">
-            <Button
-              className={`${styles.newEventButton} text-${buttonColor}`}
-              color={"link"}
-              onClick={() => setIsModalOpen(true)}
-            >
-              <span className="d-flex flex-column justify-content-center align-items-center">
-                <BiCalendarPlus size={"1.6rem"} />
-                New Event
-              </span>
-            </Button>
-          </NavItem>
-        )}
         <NavItem className="">
           <Button
             className={`${styles.newButton} text-${buttonColor}`}
