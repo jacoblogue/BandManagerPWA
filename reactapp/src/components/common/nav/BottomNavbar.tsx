@@ -24,7 +24,7 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
   return (
     <Navbar
       className="border-top p-0"
-      fixed="bottom"
+      sticky="bottom"
       color={preferredColorScheme}
       expand="lg"
     >
