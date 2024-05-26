@@ -10,8 +10,8 @@ export default function CreateSongModal({ isOpen, setModal }: Props) {
   const toggle = () => setModal(!isOpen);
 
   return (
-    <Modal centered isOpen={isOpen} toggle={toggle}>
-      <ModalHeader>Add Song</ModalHeader>
+    <Modal centered isOpen={isOpen}>
+      <ModalHeader toggle={toggle}>Add Song</ModalHeader>
       <ModalBody>Add form here</ModalBody>
     </Modal>
   );

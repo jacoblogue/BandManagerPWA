@@ -8,6 +8,7 @@ import CreateEventModal from "../events/CreateEventModal";
 import BottomNavbar from "./nav/BottomNavbar";
 import { useAuth0 } from "@auth0/auth0-react";
 import TopNavbar from "./nav/TopNavbar";
+import CreateSongModal from "../songs/CreateSongModal";
 
 export default function Layout() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -24,6 +25,7 @@ export default function Layout() {
       {/* Bottom Navbar */}
       {isAuthenticated && <BottomNavbar setIsModalOpen={setIsModalOpen} />}
       {/* <CreateEventModal isOpen={isModalOpen} setModal={setIsModalOpen} /> */}
+      <CreateSongModal isOpen={isModalOpen} setModal={setIsModalOpen} />
     </div>
   );
 }

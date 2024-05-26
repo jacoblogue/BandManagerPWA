@@ -62,7 +62,6 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
             <DropdownToggle
               className={`${styles.newButton} text-${buttonColor}`}
               color={"link"}
-              onClick={() => setIsModalOpen(true)}
             >
               <span className="d-flex flex-column justify-content-center align-items-center">
                 <BiPlusCircle size={"1.6rem"} />
@@ -70,7 +69,13 @@ export default function BottomNavbar({ setIsModalOpen }: Props) {
               </span>
             </DropdownToggle>
             <DropdownMenu>
-              <DropdownItem>Song</DropdownItem>
+              <DropdownItem
+                onClick={() => {
+                  setIsModalOpen(true);
+                }}
+              >
+                Song
+              </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
         </NavItem>
