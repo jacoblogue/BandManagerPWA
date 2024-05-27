@@ -1,5 +1,5 @@
 ﻿using BandManagerPWA.DataAccess.Models;
-using BandManagerPWA.Utils;
+using BandManagerPWA.Utils.DtoTransformers;
 using BandManagerPWA.Utils.Models;
 
 namespace BandManagerPWA.Test.Utilities

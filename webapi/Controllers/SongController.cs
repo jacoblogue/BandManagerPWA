@@ -1,6 +1,6 @@
 ﻿using BandManagerPWA.DataAccess.Models;
 using BandManagerPWA.Services.Interfaces;
-using BandManagerPWA.Utils;
+using BandManagerPWA.Utils.DtoTransformers;
 using BandManagerPWA.Utils.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +46,7 @@ namespace webapi.Controllers
         }
 
         [HttpPost, Authorize(Policy = "write:songs")]
-        public async Task<IActionResult> AddSong([FromBody] SongDTO songDTO)
+        public async Task<IActionResult> CreateSong([FromBody] SongDTO songDTO)
         {
             try
             {

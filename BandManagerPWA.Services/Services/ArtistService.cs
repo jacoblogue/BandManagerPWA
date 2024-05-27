@@ -1,5 +1,7 @@
 ﻿using BandManagerPWA.DataAccess.Models;
 using BandManagerPWA.Services.Interfaces;
+using BandManagerPWA.Utils.DtoTransformers;
+using BandManagerPWA.Utils.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BandManagerPWA.Services.Services
@@ -28,5 +30,13 @@ namespace BandManagerPWA.Services.Services
             return await _context.Artists.ToListAsync() ?? [];
         }
 
+        public async Task<Artist> CreateArtistAsync(ArtistDTO artistDTO)
+        {
+            var newArtist = ArtistDtoTransformer.TransformToArtist(artistDTO);
+
+            await _context.Artists.AddAsync(newArtist);
+            await _context.SaveChangesAsync();
+            return newArtist;
+        }
     }
 }

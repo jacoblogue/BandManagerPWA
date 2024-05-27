@@ -1,6 +1,6 @@
 ﻿using BandManagerPWA.DataAccess.Models;
 using BandManagerPWA.Services.Interfaces;
-using BandManagerPWA.Utils;
+using BandManagerPWA.Utils.DtoTransformers;
 using BandManagerPWA.Utils.Models;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,7 +1,7 @@
 ﻿using BandManagerPWA.DataAccess.Models;
 using BandManagerPWA.Utils.Models;
 
-namespace BandManagerPWA.Utils
+namespace BandManagerPWA.Utils.DtoTransformers
 {
     public class SongDtoTransformer
     {

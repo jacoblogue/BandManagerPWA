@@ -7,7 +7,7 @@ using Serilog;
 using webapi.Models;
 using BandManagerPWA.Utils.Models;
 using webapi.utilities;
-using BandManagerPWA.Utils;
+using BandManagerPWA.Utils.DtoTransformers;
 
 namespace webapi.Controllers
 {
